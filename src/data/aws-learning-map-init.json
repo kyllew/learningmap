@@ -1,0 +1,1021 @@
+[
+  {
+    "id": "track-0",
+    "name": "NON-TECHNICAL",
+    "items": [
+      {
+        "title": "Cloud Essential for Business Leaders Day (0.5D) or AWS Cloud Practitioner Essentials Day (0.5D)",
+        "url": "https://aws.amazon.com/training/classroom/aws-cloud-essentials-for-business-leaders/",
+        "duration": "0.5D",
+        "type": "course",
+        "level": "fundamental"
+      },
+      {
+        "title": "AWS Cloud for Finance Professionals",
+        "url": "https://aws.amazon.com/training/classroom/aws-cloud-for-finance-professionals/",
+        "duration": "2D",
+        "type": "course",
+        "level": "fundamental"
+      },
+      {
+        "title": "Architecting on AWS + Arc JAM",
+        "url": "https://aws.amazon.com/training/classroom/architecting-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "AWS Cloud Essentials for Business Leaders",
+        "url": "https://aws.amazon.com/training/classroom/aws-cloud-essentials-for-business-leaders/",
+        "duration": "4H",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "Generative AI for Executives",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-for-executives/",
+        "duration": "4H",
+        "type": "grid-item",
+        "level": "fundamental",
+        "targetLevel": "level-2-core",
+        "sourceTrackId": "track-0",
+        "sourceLevelId": "level-1"
+      },
+      {
+        "title": "AWS Cloud Practitioner Essentials",
+        "url": "https://aws.amazon.com/training/classroom/aws-cloud-practitioner-essentials/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam"
+      },
+      {
+        "title": "Exam Prep Official Practice Exam: AWS Certified Cloud Practitioner (CLF-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14637/exam-prep-official-practice-exam-aws-certified-cloud-practitioner-clf-c02-english",
+        "duration": "1h 30m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Generative AI Essentials on AWS",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-essentials-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "AWS Certified AI Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
+        "duration": "AIP-C01",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified AI Practitioner (AIF-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/20479/exam-prep-enhanced-course-aws-certified-ai-practitioner-aif-c01-english",
+        "duration": "16h 30m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2"
+      },
+      {
+        "title": "Exam Prep Official Practice Exam: AWS Certified Cloud Practitioner (CLF-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14637/exam-prep-official-practice-exam-aws-certified-cloud-practitioner-clf-c02-english",
+        "duration": "1h 30m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2"
+      }
+    ]
+  },
+  {
+    "id": "track-1",
+    "name": "ARCHITECTING / SECURITY",
+    "items": [
+      {
+        "title": "Architecting on AWS + Arc JAM",
+        "url": "https://aws.amazon.com/training/classroom/architecting-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "AWS Well-Architected Best Practices",
+        "url": "https://aws.amazon.com/training/classroom/aws-well-architected-best-practices/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Security Governance at Scale",
+        "url": "https://aws.amazon.com/training/classroom/security-governance-at-scale/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Advanced AWS Well-Architected Best Practices",
+        "url": "https://aws.amazon.com/training/classroom/advanced-well-architected-best-practices/",
+        "duration": "1D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "AWS Security Best Practices",
+        "url": "https://aws.amazon.com/training/classroom/aws-security-best-practices/",
+        "duration": "1D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "Security Engineering on AWS + SEC JAM",
+        "url": "https://aws.amazon.com/training/classroom/security-engineering-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "Advanced Architecting on AWS + AARC JAM",
+        "url": "https://aws.amazon.com/training/classroom/advanced-architecting-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "AWS Technical Essentials",
+        "url": "https://aws.amazon.com/training/classroom/aws-technical-essentials/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-optional"
+      },
+      {
+        "title": "AWS Certified Solutions Architect - Associate",
+        "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate",
+        "duration": "SAA-C03",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam"
+      },
+      {
+        "title": "Architecting on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/architecting-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Exam Prep Official Practice Exam: AWS Certified Solutions Architect - Associate (SAA-C03)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/13593/exam-prep-official-practice-exam-aws-certified-solutions-architect-associate-saa-c03-english",
+        "duration": "2h 10m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Exam Prep Official Practice Exam: AWS Certified Solutions Architect - Associate (SAA-C03)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/13593/exam-prep-official-practice-exam-aws-certified-solutions-architect-associate-saa-c03-english",
+        "duration": "2h 10m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Security Engineering on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/security-engineering-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-3"
+      },
+      {
+        "title": "AWS Certified Security - Specialty",
+        "url": "https://aws.amazon.com/certification/certified-security-specialty",
+        "duration": "SCS-C02",
+        "type": "certification",
+        "level": "professional",
+        "targetLevel": "exams-3"
+      },
+      {
+        "title": "AWS Certified Solutions Architect - Professional",
+        "url": "https://aws.amazon.com/certification/certified-solutions-architect-professional",
+        "duration": "SAP-C02",
+        "type": "certification",
+        "level": "professional",
+        "targetLevel": "exams-deep"
+      },
+      {
+        "title": "Networking Essentials for Cloud Applications on AWS",
+        "url": "https://aws.amazon.com/training/classroom/networking-essentials-for-cloud-applications-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-additional"
+      },
+      {
+        "title": "Migrating to AWS",
+        "url": "https://aws.amazon.com/training/classroom/migrating-to-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-additional"
+      },
+      {
+        "title": "AWS Certified Advanced Networking - Specialty",
+        "url": "https://aws.amazon.com/certification/certified-advanced-networking-specialty",
+        "duration": "ANS-C01",
+        "type": "grid-item",
+        "level": "professional",
+        "targetLevel": "exams-deep",
+        "sourceTrackId": "track-1",
+        "sourceLevelId": "exams-deep"
+      },
+      {
+        "title": "Designing and Implementing Storage on AWS",
+        "url": "https://aws.amazon.com/training/classroom/designing-and-implementing-storage-on-aws/",
+        "duration": "3D",
+        "type": "grid-item",
+        "level": "associate",
+        "targetLevel": "level-2-additional",
+        "sourceTrackId": "track-0",
+        "sourceLevelId": "level-2-additional"
+      },
+      {
+        "title": "Generative AI Essentials on AWS",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-essentials-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Solutions Architect - Associate",
+        "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate",
+        "duration": "SAA-C03",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Solutions Architect - Associate (SAA-C03)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14776/exam-prep-enhanced-course-aws-certified-solutions-architect-associate-saa-c03",
+        "duration": "9h 30m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2"
+      },
+      {
+        "title": "AWS Certified Security - Specialty",
+        "url": "https://aws.amazon.com/certification/certified-security-specialty",
+        "duration": "SCS-C02",
+        "type": "grid-item",
+        "level": "professional",
+        "targetLevel": "exam-3",
+        "sourceTrackId": "track-0",
+        "sourceLevelId": "exam-3"
+      },
+      {
+        "title": "Advanced Architecting on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/advanced-architecting-aws/",
+        "duration": "4D",
+        "type": "grid-item",
+        "level": "professional",
+        "targetLevel": "level-3",
+        "sourceTrackId": "track-1",
+        "sourceLevelId": "level-3-deep"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Security - Specialty (SCS-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/18292/exam-prep-enhanced-course-aws-certified-security-specialty-scs-c02-english",
+        "duration": "14h 15m",
+        "type": "grid-item",
+        "level": "professional",
+        "targetLevel": "exam-readiness-3",
+        "sourceTrackId": "track-0",
+        "sourceLevelId": "exam-readiness-3"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Solutions Architect - Professional (SAP-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14953/exam-prep-enhanced-course-aws-certified-solutions-architect-professional-sap-c02",
+        "duration": "10h 30m",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "exam-readiness-3"
+      },
+      {
+        "title": "AWS Certified AI Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
+        "duration": "AIP-C01",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-1"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified AI Practitioner (AIF-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/20479/exam-prep-enhanced-course-aws-certified-ai-practitioner-aif-c01-english",
+        "duration": "16h 30m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-1"
+      }
+    ]
+  },
+  {
+    "id": "track-2",
+    "name": "SYSOPS / DEVOPS",
+    "items": [
+      {
+        "title": "Cloud Operations on AWS + Cloud Operations JAM",
+        "url": "https://aws.amazon.com/training/classroom/cloud-operations-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "AWS Cloud Financial Management for Builders",
+        "url": "https://aws.amazon.com/training/classroom/aws-cloud-financial-management-for-builders/",
+        "duration": "3D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "DevOps Engineering on AWS + DevOps Jam",
+        "url": "https://aws.amazon.com/training/classroom/devops-engineering-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "AWS Technical Essentials",
+        "url": "https://aws.amazon.com/training/classroom/aws-technical-essentials/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-optional"
+      },
+      {
+        "title": "Cloud Operations on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/cloud-operations-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "AWS Certified SysOps Administrator - Associate",
+        "url": "https://aws.amazon.com/certification/certified-sysops-admin-associate",
+        "duration": "SOA-C02",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified SysOps Administrator - Associate (SOA-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/21675/exam-prep-enhanced-course-aws-certified-sysops-administrator-associate-soa-c02",
+        "duration": "9h",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "DevOps Engineering on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/devops-engineering-on-aws/",
+        "duration": "4D",
+        "type": "grid-item",
+        "level": "professional",
+        "targetLevel": "level-3",
+        "sourceTrackId": "track-2",
+        "sourceLevelId": "level-3-deep"
+      },
+      {
+        "title": "Generative AI Essentials on AWS",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-essentials-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified SysOps Administrator - Associate",
+        "url": "https://aws.amazon.com/certification/certified-sysops-admin-associate",
+        "duration": "SOA-C02",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified SysOps Administrator - Associate (SOA-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/21675/exam-prep-enhanced-course-aws-certified-sysops-administrator-associate-soa-c02",
+        "duration": "9h",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2"
+      },
+      {
+        "title": "AWS Certified DevOps Engineer - Professional",
+        "url": "https://aws.amazon.com/certification/certified-devops-engineer-professional",
+        "duration": "DOP-C02",
+        "type": "certification",
+        "level": "professional",
+        "targetLevel": "exam-3"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified DevOps Engineer - Professional (DOP-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/16512/exam-prep-enhanced-course-aws-certified-devops-engineer-professional-dop-c02-english",
+        "duration": "12h",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "exam-readiness-3"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-1"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Cloud Practitioner (CLF-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/16485/exam-prep-enhanced-course-aws-certified-cloud-practitioner-clf-c02-english",
+        "duration": "11h",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-1"
+      }
+    ]
+  },
+  {
+    "id": "track-3",
+    "name": "DEV / DEVOPS",
+    "items": [
+      {
+        "title": "AWS Technical Essentials Day",
+        "url": "https://aws.amazon.com/training/classroom/aws-technical-essentials/",
+        "duration": "0.5D",
+        "type": "course",
+        "level": "fundamental"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+        "duration": "Exam",
+        "type": "certification",
+        "level": "fundamental"
+      },
+      {
+        "title": "Developing on AWS + Dev JAM",
+        "url": "https://aws.amazon.com/training/classroom/developing-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Running Containers on Amazon EKS",
+        "url": "https://aws.amazon.com/training/classroom/running-containers-on-amazon-elastic-kubernetes-service-amazon-eks/",
+        "duration": "3D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Advanced Developing on AWS + ADev JAM",
+        "url": "https://aws.amazon.com/training/classroom/advanced-developing-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "MLOps Engineering on AWS",
+        "url": "https://aws.amazon.com/training/classroom/mlops-engineering-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "AWS Technical Essentials",
+        "url": "https://aws.amazon.com/training/classroom/aws-technical-essentials/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-optional"
+      },
+      {
+        "title": "AWS Certified Developer - Associate",
+        "url": "https://aws.amazon.com/certification/certified-developer-associate",
+        "duration": "DVA-C02",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam"
+      },
+      {
+        "title": "Developing on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/developing-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Developer - Associate (DVA-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14723/exam-prep-enhanced-course-aws-certified-developer-associate-dva-c02",
+        "duration": "11h",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Exam Prep Official Practice Exam: AWS Certified Developer - Associate (DVA-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14196/exam-prep-official-practice-exam-aws-certified-developer-associate-dva-c02-english",
+        "duration": "2h 10m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Running Containers on Amazon EKS",
+        "url": "https://aws.amazon.com/training/classroom/running-containers-on-amazon-elastic-kubernetes-service-amazon-eks/",
+        "duration": "3D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-additional"
+      },
+      {
+        "title": "Developing Serverless Solutions on AWS",
+        "url": "https://aws.amazon.com/training/classroom/developing-serverless-solutions-on-aws/",
+        "duration": "3D",
+        "type": "grid-item",
+        "level": "associate",
+        "targetLevel": "level-2-additional",
+        "sourceTrackId": "track-3",
+        "sourceLevelId": "level-3"
+      },
+      {
+        "title": "DevOps Engineering on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/devops-engineering-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "level-3"
+      },
+      {
+        "title": "Generative AI Essentials on AWS",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-essentials-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "MLOps Engineering on AWS",
+        "url": "https://aws.amazon.com/training/classroom/mlops-engineering-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "AWS Certified Developer - Associate",
+        "url": "https://aws.amazon.com/certification/certified-developer-associate",
+        "duration": "DVA-C02",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Developer - Associate (DVA-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14723/exam-prep-enhanced-course-aws-certified-developer-associate-dva-c02",
+        "duration": "11h",
+        "type": "grid-item",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2",
+        "sourceTrackId": "track-2",
+        "sourceLevelId": "exam-readiness-2"
+      },
+      {
+        "title": "AWS Certified DevOps Engineer - Professional",
+        "url": "https://aws.amazon.com/certification/certified-devops-engineer-professional",
+        "duration": "DOP-C02",
+        "type": "certification",
+        "level": "professional",
+        "targetLevel": "exam-3"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified DevOps Engineer - Professional (DOP-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/16512/exam-prep-enhanced-course-aws-certified-devops-engineer-professional-dop-c02-english",
+        "duration": "12h",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "exam-readiness-3"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Cloud Practitioner (CLF-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/16485/exam-prep-enhanced-course-aws-certified-cloud-practitioner-clf-c02-english",
+        "duration": "11h",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-1"
+      }
+    ]
+  },
+  {
+    "id": "track-4",
+    "name": "MACHINE LEARNING/ Generative AI",
+    "items": [
+      {
+        "title": "Machine Learning Pipeline on AWS or Amazon SageMaker Studio for Data Scientists",
+        "url": "https://aws.amazon.com/training/classroom/amazon-sagemaker-studio-for-data-scientists/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "Deep Learning",
+        "url": "https://aws.amazon.com/training/classroom/deep-learning/",
+        "duration": "1D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "Practical Data Science with Amazon SageMaker",
+        "url": "https://aws.amazon.com/training/classroom/practical-data-science-with-amazon-sagemaker/",
+        "duration": "1D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "AWS Technical Essentials",
+        "url": "https://aws.amazon.com/training/classroom/aws-technical-essentials/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-optional"
+      },
+      {
+        "title": "Practical Data Science with Amazon SageMaker",
+        "url": "https://aws.amazon.com/training/classroom/practical-data-science-with-amazon-sagemaker/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Machine Learning Engineer - Associate (MLA-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/19876/exam-prep-enhanced-course-aws-certified-machine-learning-engineer-associate-mla-c01-english",
+        "duration": "12h 45m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Exam Prep Official Pretest: AWS Certified Machine Learning Engineer - Associate (MLA-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/19742/exam-prep-official-pretest-aws-certified-machine-learning-engineer-associate-mla-c01-english",
+        "duration": "2h 10m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Amazon SageMaker Studio for Data Scientists",
+        "url": "https://aws.amazon.com/training/classroom/amazon-sagemaker-studio-for-data-scientists/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "level-3"
+      },
+      {
+        "title": "AWS Certified Machine Learning - Specialty",
+        "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty",
+        "duration": "MLS-C01",
+        "type": "certification",
+        "level": "professional",
+        "targetLevel": "exams-3"
+      },
+      {
+        "title": "Generative AI Essentials on AWS",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-essentials-on-aws/",
+        "duration": "1D",
+        "type": "grid-item",
+        "level": "fundamental",
+        "targetLevel": "level-1",
+        "sourceTrackId": "track-3",
+        "sourceLevelId": "level-1"
+      },
+      {
+        "title": "AWS Certified Machine Learning Engineer - Associate",
+        "url": "https://aws.amazon.com/certification/certified-machine-learning-engineer-associate",
+        "duration": "MLS-C01",
+        "type": "grid-item",
+        "level": "associate",
+        "targetLevel": "exam",
+        "sourceTrackId": "track-4",
+        "sourceLevelId": "exams-3"
+      },
+      {
+        "title": "MLOps Engineering on AWS",
+        "url": "https://aws.amazon.com/training/classroom/mlops-engineering-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Developing Generative AI Applications on AWS with JAM",
+        "url": "https://aws.amazon.com/training/classroom/developing-generative-ai-applications-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "level-3"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified AI Practitioner (AIF-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/20479/exam-prep-enhanced-course-aws-certified-ai-practitioner-aif-c01-english",
+        "duration": "16h 30m",
+        "type": "grid-item",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-1",
+        "sourceTrackId": "track-3",
+        "sourceLevelId": "exam-readiness-1"
+      },
+      {
+        "title": "AWS Certified Machine Learning Engineer - Associate",
+        "url": "https://aws.amazon.com/certification/certified-machine-learning-engineer-associate",
+        "duration": "MLS-C01",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Machine Learning Engineer - Associate (MLA-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/19876/exam-prep-enhanced-course-aws-certified-machine-learning-engineer-associate-mla-c01-english",
+        "duration": "12h 45m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2"
+      },
+      {
+        "title": "AWS Certified Machine Learning - Specialty",
+        "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty",
+        "duration": "MLS-C01",
+        "type": "grid-item",
+        "level": "professional",
+        "targetLevel": "exam-3",
+        "sourceTrackId": "track-3",
+        "sourceLevelId": "exam-3"
+      },
+      {
+        "title": "AWS Certified AI Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
+        "duration": "AIP-C01",
+        "type": "grid-item",
+        "level": "fundamental",
+        "targetLevel": "exam-1",
+        "sourceTrackId": "track-5",
+        "sourceLevelId": "exam-1"
+      }
+    ]
+  },
+  {
+    "id": "track-5",
+    "name": "DATA ANALYTICS",
+    "items": [
+      {
+        "title": "Building Data Lakes on AWS",
+        "url": "https://aws.amazon.com/training/classroom/building-data-lakes/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Building Batch Data Analytics Solutions on AWS",
+        "url": "https://aws.amazon.com/training/classroom/building-batch-data-analytics-solutions-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Building Data Analytics Solutions using Amazon Redshift",
+        "url": "https://aws.amazon.com/training/classroom/building-data-analytics-solutions-using-amazon-redshift/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Building Streaming Data Analytics Solutions on AWS",
+        "url": "https://aws.amazon.com/training/classroom/building-streaming-data-analytics-solutions-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Architecting on AWS + Arc JAM",
+        "url": "https://aws.amazon.com/training/classroom/architecting-on-aws/",
+        "duration": "4D",
+        "type": "course",
+        "level": "associate"
+      },
+      {
+        "title": "Data Warehousing on AWS",
+        "url": "https://aws.amazon.com/training/classroom/data-warehousing-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "Planning and Designing Databases on AWS",
+        "url": "https://aws.amazon.com/training/classroom/planning-and-designing-databases-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional"
+      },
+      {
+        "title": "AWS Technical Essentials",
+        "url": "https://aws.amazon.com/training/classroom/aws-technical-essentials/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-optional"
+      },
+      {
+        "title": "AWS Certified Data Engineer - Associate",
+        "url": "https://aws.amazon.com/certification/certified-data-engineer-associate",
+        "duration": "DAS-C01",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam"
+      },
+      {
+        "title": "Building Data Lakes on AWS",
+        "url": "https://aws.amazon.com/training/classroom/building-data-lakes/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Building Batch Data Analytics Solutions on AWS",
+        "url": "https://aws.amazon.com/training/classroom/building-batch-data-analytics-solutions-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Building Data Analytics Solutions Using Amazon Redshift",
+        "url": "https://aws.amazon.com/training/classroom/building-data-analytics-solutions-using-amazon-redshift/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Building Streaming Data Analytics Solutions on AWS",
+        "url": "https://aws.amazon.com/training/classroom/building-streaming-data-analytics-solutions-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "associate",
+        "targetLevel": "level-2-core"
+      },
+      {
+        "title": "Exam Prep Official Pretest: AWS Certified Data Engineer - Associate (DEA-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/18609/exam-prep-official-pretest-aws-certified-data-engineer-associate-dea-c01-english",
+        "duration": "2h 10m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Data Engineer - Associate (DEA-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/18603/exam-prep-enhanced-course-aws-certified-data-engineer-associate-dea-c01-english",
+        "duration": "15h 25m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness"
+      },
+      {
+        "title": "Generative AI Essentials on AWS",
+        "url": "https://aws.amazon.com/training/classroom/generative-ai-essentials-on-aws/",
+        "duration": "1D",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "level-1"
+      },
+      {
+        "title": "Data Warehousing on AWS",
+        "url": "https://aws.amazon.com/training/classroom/data-warehousing-on-aws/",
+        "duration": "3D",
+        "type": "course",
+        "level": "professional",
+        "targetLevel": "level-3"
+      },
+      {
+        "title": "AWS Certified Data Engineer - Associate",
+        "url": "https://aws.amazon.com/certification/certified-data-engineer-associate",
+        "duration": "DAS-C01",
+        "type": "certification",
+        "level": "associate",
+        "targetLevel": "exam-2"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Data Engineer - Associate (DEA-C01)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/18603/exam-prep-enhanced-course-aws-certified-data-engineer-associate-dea-c01-english",
+        "duration": "15h 25m",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-2"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-1"
+      },
+      {
+        "title": "Exam Prep Enhanced Course: AWS Certified Cloud Practitioner (CLF-C02)",
+        "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/16485/exam-prep-enhanced-course-aws-certified-cloud-practitioner-clf-c02-english",
+        "duration": "11h",
+        "type": "course",
+        "level": "fundamental",
+        "targetLevel": "exam-readiness-1"
+      }
+    ]
+  }
+]
