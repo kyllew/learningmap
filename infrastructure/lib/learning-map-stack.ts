@@ -76,7 +76,9 @@ export class LearningMapStack extends cdk.Stack {
           }
         },
         commands: [
-          'cd ..',
+          'cd $CODEBUILD_SRC_DIR',
+          'echo "Current directory: $(pwd)"',
+          'ls -la',
           'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 358719591151.dkr.ecr.us-east-1.amazonaws.com',
           'docker build -t learningmap .',
           'docker tag learningmap:latest 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest',
