@@ -14,37 +14,25 @@ export class LearningMapStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // VPC
-    const vpc = new ec2.Vpc(this, 'LearningMapVpc', {
-      maxAzs: 2,
-      natGateways: 1
-    });
-
-    // ECS Cluster
-    const cluster = new ecs.Cluster(this, 'LearningMapCluster', {
-      vpc,
-      containerInsights: true
-    });
-
-    // ECR Repository
-    const repository = new ecr.Repository(this, 'LearningMapRepo', {
-      repositoryName: 'learningmap',
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-      imageScanOnPush: true
-    });
-
     // Pipeline
     const pipeline = new pipelines.CodePipeline(this, 'LearningMapPipeline', {
       pipelineName: 'LearningMapPipeline',
       synth: new pipelines.ShellStep('Synth', {
         input: pipelines.CodePipelineSource.connection('kyllew/learningmap', 'main', {
-          connectionArn: 'arn:aws:codestar-connections:us-east-1:358719591151:connection/7e303cfc-9e9d-44ea-92ca-f094158e5f06'
+          connectionArn: 'arn:aws:codestar-connections:us-east-1:358719591151:connection/7e303cfc-9e9d-44ea-92ca-f094158e5f06',
+          triggerOnPush: true
         }),
+        primaryOutputDirectory: 'infrastructure/cdk.out',
         commands: [
-          'npm ci',
+          'cd infrastructure',
+          'npm install -g aws-cdk',
+          'npm install',
           'npm run build',
           'npx cdk synth'
-        ]
+        ],
+        env: {
+          NODE_VERSION: '18'
+        }
       }),
       dockerEnabledForSynth: true
     });
@@ -65,27 +53,27 @@ class LearningMapStage extends cdk.Stage {
     super(scope, id, props);
 
     // Create a new stack for the stage
-    const stageStack = new cdk.Stack(this, 'LearningMapStageStack', {
+    const serviceStack = new cdk.Stack(this, 'ServiceStack', {
       env: props?.env
     });
 
     // VPC
-    const vpc = new ec2.Vpc(stageStack, 'LearningMapVpc', {
+    const vpc = new ec2.Vpc(serviceStack, 'LearningMapVpc', {
       maxAzs: 2,
       natGateways: 1
     });
 
     // ECS Cluster
-    const cluster = new ecs.Cluster(stageStack, 'LearningMapCluster', {
+    const cluster = new ecs.Cluster(serviceStack, 'LearningMapCluster', {
       vpc,
       containerInsights: true
     });
 
-    // ECR Repository
-    const repository = ecr.Repository.fromRepositoryName(stageStack, 'LearningMapRepo', 'learningmap');
+    // Use existing ECR Repository
+    const repository = ecr.Repository.fromRepositoryName(serviceStack, 'LearningMapRepo', 'learningmap');
 
     // ECS Service
-    const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(stageStack, 'LearningMapService', {
+    const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
       cluster,
       memoryLimitMiB: 512,
       cpu: 256,
