@@ -81,7 +81,7 @@ const DraggableCourseItem: React.FC<{
           <Badge 
             color={
               item.level === 'fundamental' ? 'blue' : 
-              item.level === 'associate' ? 'green' : 'purple'
+              item.level === 'associate' ? 'green' : 'red'
             }
           >
             {item.level.charAt(0).toUpperCase() + item.level.slice(1)}
