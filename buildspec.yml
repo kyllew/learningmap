@@ -13,7 +13,9 @@ phases:
       - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
-      - cd ..
+      - cd $CODEBUILD_SRC_DIR
+      - echo "Current directory: $(pwd)"
+      - ls -la
       - docker build -t learningmap .
       - docker tag learningmap:latest 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest
   post_build:
