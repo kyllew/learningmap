@@ -37,6 +37,72 @@ export class LearningMapStack extends cdk.Stack {
       dockerEnabledForSynth: true
     });
 
+    // Add build stage
+    class BuildStage extends cdk.Stage {
+      constructor(scope: Construct, id: string, props?: cdk.StageProps) {
+        super(scope, id, props);
+
+        // Create a stack for the build stage
+        new cdk.Stack(this, 'BuildStack', {
+          env: props?.env
+        });
+      }
+    }
+
+    const buildStage = pipeline.addStage(new BuildStage(this, 'BuildStage', {
+      env: {
+        account: process.env.CDK_DEFAULT_ACCOUNT,
+        region: process.env.CDK_DEFAULT_REGION
+      }
+    }));
+
+    // Add build step
+    buildStage.addPost(
+      new pipelines.CodeBuildStep('BuildAndPushImage', {
+        projectName: 'LearningMapBuild',
+        buildEnvironment: {
+          buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
+          privileged: true,
+          environmentVariables: {
+            REPOSITORY_URI: {
+              value: '358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap'
+            },
+            CONTAINER_NAME: {
+              value: 'learningmap'
+            },
+            AWS_DEFAULT_REGION: {
+              value: 'us-east-1'
+            }
+          }
+        },
+        commands: [
+          'cd ..',
+          'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 358719591151.dkr.ecr.us-east-1.amazonaws.com',
+          'docker build -t learningmap .',
+          'docker tag learningmap:latest 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest',
+          'docker push 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest'
+        ],
+        rolePolicyStatements: [
+          new iam.PolicyStatement({
+            actions: ['ecr:GetAuthorizationToken'],
+            resources: ['*']
+          }),
+          new iam.PolicyStatement({
+            actions: [
+              'ecr:BatchCheckLayerAvailability',
+              'ecr:GetDownloadUrlForLayer',
+              'ecr:BatchGetImage',
+              'ecr:InitiateLayerUpload',
+              'ecr:UploadLayerPart',
+              'ecr:CompleteLayerUpload',
+              'ecr:PutImage'
+            ],
+            resources: ['arn:aws:ecr:us-east-1:358719591151:repository/learningmap']
+          })
+        ]
+      })
+    );
+
     // Add deployment stage
     const deployStage = new LearningMapStage(this, 'Deploy', {
       env: {
@@ -69,8 +135,12 @@ class LearningMapStage extends cdk.Stage {
       containerInsights: true
     });
 
-    // Use existing ECR Repository
-    const repository = ecr.Repository.fromRepositoryName(serviceStack, 'LearningMapRepo', 'learningmap');
+    // ECR Repository
+    const repository = new ecr.Repository(serviceStack, 'LearningMapRepo', {
+      repositoryName: 'learningmap',
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      imageScanOnPush: true
+    });
 
     // ECS Service
     const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
