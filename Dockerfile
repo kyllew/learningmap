@@ -14,9 +14,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY src ./src
 COPY public ./public
-COPY next.config.js ./
-COPY tsconfig.json ./
 COPY tailwind.config.js ./
+COPY tailwind.config.ts ./
+COPY tsconfig.json ./
 COPY postcss.config.js ./
 COPY next-env.d.ts ./
 
