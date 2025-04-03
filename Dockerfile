@@ -18,7 +18,9 @@ COPY tailwind.config.js ./
 COPY tailwind.config.ts ./
 COPY tsconfig.json ./
 COPY postcss.config.js ./
-COPY next-env.d.ts ./
+
+# Copy next-env.d.ts if it exists
+COPY next-env.d.ts* ./
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
