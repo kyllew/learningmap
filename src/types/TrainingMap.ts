@@ -2,7 +2,7 @@ export interface TrackItem {
   title: string;
   url: string;
   duration: string;
-  type: 'course' | 'certification';
+  type: 'course' | 'certification' | 'grid-item';
   level: 'fundamental' | 'associate' | 'professional';
   status?: 'not-started' | 'in-progress' | 'completed';
   targetLevel?: string;
