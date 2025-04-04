@@ -12,6 +12,9 @@ import Button from "@cloudscape-design/components/button";
 import Box from "@cloudscape-design/components/box";
 import Alert from "@cloudscape-design/components/alert";
 
+// Type assertion for the imported JSON data
+const typedInitialTracksData = initialTracksData as Track[];
+
 interface TrackManagerProps {
   tracks: Track[];
   onTracksChange: (tracks: Track[]) => void;
@@ -31,7 +34,7 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
 
   const loadInitialTracks = () => {
     try {
-      onTracksChange(initialTracksData);
+      onTracksChange(typedInitialTracksData);
     } catch (error) {
       console.error('Error loading initial tracks:', error);
     }
