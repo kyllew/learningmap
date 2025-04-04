@@ -6,21 +6,14 @@ export interface TrackItem {
   level: 'fundamental' | 'associate' | 'professional';
   status?: 'not-started' | 'in-progress' | 'completed';
   targetLevel?: string;
+  sourceTrackId?: string;
+  sourceLevelId?: string;
 }
 
 export interface Track {
   id: string;
   name: string;
-  items: {
-    title: string;
-    url: string;
-    duration: string;
-    type: string;
-    level: string;
-    targetLevel?: string;
-    sourceTrackId?: string;
-    sourceLevelId?: string;
-  }[];
+  items: TrackItem[];
 }
 
 export interface Level {
