@@ -71,8 +71,20 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
             body {
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
               margin: 0;
-              padding: 20px;
+              padding: 0;
               background-color: #f8f8f8;
+            }
+            
+            .header {
+              background-color: #0972d3;
+              color: white;
+              padding: 16px;
+            }
+            
+            .header h1 {
+              margin: 0;
+              font-size: 24px;
+              font-weight: bold;
             }
             
             .container {
@@ -83,6 +95,7 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
               position: relative;
               height: calc(100vh - 40px);
               overflow: hidden;
+              margin: 20px;
             }
 
             .table-wrapper {
@@ -242,6 +255,9 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
           </style>
         </head>
         <body>
+          <header class="header">
+            <h1>AWS ILT Classroom</h1>
+          </header>
           <div class="container">
             <div class="table-wrapper">
               <table>
