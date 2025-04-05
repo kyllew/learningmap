@@ -51,6 +51,14 @@
         "targetLevel": "level-2-core"
       },
       {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam"
+      },
+      {
         "title": "Exam Prep Official Practice Exam: AWS Certified Cloud Practitioner (CLF-C02)",
         "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14637/exam-prep-official-practice-exam-aws-certified-cloud-practitioner-clf-c02-english",
         "duration": "1h 30m",
@@ -65,6 +73,14 @@
         "type": "course",
         "level": "fundamental",
         "targetLevel": "level-2-core"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-2"
       },
       {
         "title": "AWS Certified AI Practitioner",
@@ -152,6 +168,14 @@
         "type": "course",
         "level": "fundamental",
         "targetLevel": "level-1"
+      },
+      {
+        "title": "AWS Certified Cloud Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
+        "duration": "CLF-C02",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-optional"
       },
       {
         "title": "AWS Certified Solutions Architect - Associate",
@@ -308,6 +332,14 @@
         "targetLevel": "exam-readiness-3"
       },
       {
+        "title": "AWS Certified AI Practitioner",
+        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
+        "duration": "AIP-C01",
+        "type": "certification",
+        "level": "fundamental",
+        "targetLevel": "exam-1"
+      },
+      {
         "title": "Exam Prep Enhanced Course: AWS Certified AI Practitioner (AIF-C01)",
         "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/20479/exam-prep-enhanced-course-aws-certified-ai-practitioner-aif-c01-english",
         "duration": "16h 30m",
@@ -319,14 +351,6 @@
         "title": "AWS Certified Cloud Practitioner",
         "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
         "duration": "CLF-C02",
-        "type": "certification",
-        "level": "fundamental",
-        "targetLevel": "exam-1"
-      },
-      {
-        "title": "AWS Certified AI Practitioner",
-        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
-        "duration": "AIP-C01",
         "type": "certification",
         "level": "fundamental",
         "targetLevel": "exam-1"
@@ -463,14 +487,6 @@
         "type": "course",
         "level": "fundamental",
         "targetLevel": "exam-readiness-1"
-      },
-      {
-        "title": "AWS Certified AI Practitioner",
-        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
-        "duration": "AIP-C01",
-        "type": "certification",
-        "level": "fundamental",
-        "targetLevel": "exam-1"
       }
     ]
   },
@@ -659,14 +675,6 @@
         "type": "certification",
         "level": "fundamental",
         "targetLevel": "exam-1"
-      },
-      {
-        "title": "AWS Certified AI Practitioner",
-        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
-        "duration": "AIP-C01",
-        "type": "certification",
-        "level": "fundamental",
-        "targetLevel": "exam-1"
       }
     ]
   },
@@ -832,14 +840,6 @@
         "targetLevel": "exam-1",
         "sourceTrackId": "track-5",
         "sourceLevelId": "exam-1"
-      },
-      {
-        "title": "AWS Certified Cloud Practitioner",
-        "url": "https://aws.amazon.com/certification/certified-cloud-practitioner",
-        "duration": "CLF-C02",
-        "type": "certification",
-        "level": "fundamental",
-        "targetLevel": "exam-1"
       }
     ]
   },
@@ -1015,14 +1015,6 @@
         "type": "course",
         "level": "fundamental",
         "targetLevel": "exam-readiness-1"
-      },
-      {
-        "title": "AWS Certified AI Practitioner",
-        "url": "https://aws.amazon.com/certification/certified-ai-practitioner",
-        "duration": "AIP-C01",
-        "type": "certification",
-        "level": "fundamental",
-        "targetLevel": "exam-1"
       }
     ]
   }

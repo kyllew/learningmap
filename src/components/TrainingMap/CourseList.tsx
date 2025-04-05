@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { TrackItem } from '@/types/TrainingMap';
+import dynamic from 'next/dynamic';
+import { DragEndEvent } from '@dnd-kit/core';
 
 // Import Cloudscape components
 import ExpandableSection from "@cloudscape-design/components/expandable-section";
@@ -12,13 +14,24 @@ import Badge from "@cloudscape-design/components/badge";
 import Link from "@cloudscape-design/components/link";
 import Box from "@cloudscape-design/components/box";
 
+// Dynamically import the DndContextWrapper with ssr: false
+const DndContextWrapper = dynamic(() => import('./DndContextWrapper'), { ssr: false });
+
 const CourseList: React.FC = () => {
   const [isCertificationsExpanded, setIsCertificationsExpanded] = useState(false);
   const [isCoursesExpanded, setIsCoursesExpanded] = useState(false);
   const [isExamPrepExpanded, setIsExamPrepExpanded] = useState(false);
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over) {
+      // Handle the drag end event, e.g., update the grid
+      console.log('Dragged item:', active.id, 'to:', over.id);
+    }
+  };
+
   return (
-    <Box padding="n">
+    <Box padding="n" className="course-list-container max-h-[calc(100vh-200px)] overflow-y-auto">
       <SpaceBetween size="l">
         {/* Certifications Section */}
         <ExpandableSection 
@@ -27,11 +40,13 @@ const CourseList: React.FC = () => {
           onChange={({ detail }) => setIsCertificationsExpanded(detail.expanded)}
           variant="container"
         >
-          <SpaceBetween size="xs">
-            {AWS_CERTIFICATIONS.map((cert) => (
-              <DraggableCourseItem key={cert.title} course={cert} />
-            ))}
-          </SpaceBetween>
+          <div className="max-h-[300px] overflow-y-auto">
+            <SpaceBetween size="xs">
+              {AWS_CERTIFICATIONS.map((cert) => (
+                <DraggableCourseItem key={cert.title} course={cert} />
+              ))}
+            </SpaceBetween>
+          </div>
         </ExpandableSection>
 
         {/* Courses Section */}
@@ -41,11 +56,13 @@ const CourseList: React.FC = () => {
           onChange={({ detail }) => setIsCoursesExpanded(detail.expanded)}
           variant="container"
         >
-          <SpaceBetween size="xs">
-            {TRAINING_COURSES.map((course) => (
-              <DraggableCourseItem key={course.title} course={course} />
-            ))}
-          </SpaceBetween>
+          <div className="max-h-[300px] overflow-y-auto">
+            <SpaceBetween size="xs">
+              {TRAINING_COURSES.map((course) => (
+                <DraggableCourseItem key={course.title} course={course} />
+              ))}
+            </SpaceBetween>
+          </div>
         </ExpandableSection>
 
         {/* Exam Prep Section */}
@@ -55,11 +72,13 @@ const CourseList: React.FC = () => {
           onChange={({ detail }) => setIsExamPrepExpanded(detail.expanded)}
           variant="container"
         >
-          <SpaceBetween size="xs">
-            {EXAM_PREP_COURSES.map((course) => (
-              <DraggableCourseItem key={course.title} course={course} />
-            ))}
-          </SpaceBetween>
+          <div className="max-h-[300px] overflow-y-auto">
+            <SpaceBetween size="xs">
+              {EXAM_PREP_COURSES.map((course) => (
+                <DraggableCourseItem key={course.title} course={course} />
+              ))}
+            </SpaceBetween>
+          </div>
         </ExpandableSection>
       </SpaceBetween>
     </Box>
@@ -77,6 +96,12 @@ const DraggableCourseItem: React.FC<{ course: TrackItem }> = ({ course }) => {
     transform: CSS.Transform.toString(transform),
   } : undefined;
 
+  // Remove aria-describedby from attributes spread
+  const { 'aria-describedby': _, ...restAttributes } = attributes;
+
+  // Use a static or consistent ID for aria-describedby
+  const describedById = `description-${course.title.replace(/\s+/g, '-')}`;
+
   return (
     <div 
       ref={setNodeRef} 
@@ -93,7 +118,8 @@ const DraggableCourseItem: React.FC<{ course: TrackItem }> = ({ course }) => {
         transition-all duration-200
         ${isDragging ? 'shadow-2xl scale-105' : ''}
       `}
-      {...attributes} 
+      aria-describedby={describedById}
+      {...restAttributes} 
       {...listeners}
     >
       <SpaceBetween size="xs">
