@@ -65,11 +65,29 @@ const DndProvider: React.FC<DndProviderProps> = ({
       onDragEnd={onDragEnd}
     >
       {children}
-      <DragOverlay dropAnimation={dropAnimation}>
+      <DragOverlay 
+        dropAnimation={dropAnimation}
+        style={{
+          position: 'fixed',
+          zIndex: 100,
+          pointerEvents: 'none',
+        }}
+      >
         {activeId && activeItem && (
-          <div className="bg-white p-4 rounded-lg shadow-lg border border-blue-200 transform scale-105">
-            <div className="font-medium">{activeItem.title}</div>
-            <div className="text-sm text-gray-500">{activeItem.duration}</div>
+          <div 
+            className="bg-white px-4 py-2 rounded-md border border-blue-200 text-base font-medium text-gray-700"
+            style={{
+              position: 'relative',
+              zIndex: 100,
+              pointerEvents: 'none',
+              maxWidth: '300px',
+              minWidth: '200px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {activeItem.title}
           </div>
         )}
       </DragOverlay>

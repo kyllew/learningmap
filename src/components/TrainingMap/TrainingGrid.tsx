@@ -58,17 +58,53 @@ const TrainingGrid: React.FC = () => {
     if (over) {
       const { trackId, levelId } = over.data.current as { trackId: string; levelId: string };
       const courseData = active.data.current as TrackItem;
+      const sourceTrackId = (active.data.current as any)?.sourceTrackId;
       
       setTracks(prevTracks => {
-        return prevTracks.map(track => {
-          if (track.id === trackId) {
-            return {
-              ...track,
-              items: [...track.items, { ...courseData, targetLevel: levelId }]
-            };
-          }
-          return track;
-        });
+        // Check if the course already exists in the target cell
+        const targetTrack = prevTracks.find(track => track.id === trackId);
+        const courseExists = targetTrack?.items.some(
+          item => item.title === courseData.title && item.targetLevel === levelId
+        );
+
+        if (courseExists) {
+          // If course already exists in the target cell, don't add it again
+          return prevTracks;
+        }
+
+        if (sourceTrackId) {
+          // Moving from one cell to another
+          const tracksWithoutItem = prevTracks.map(track => {
+            if (track.id === sourceTrackId) {
+              return {
+                ...track,
+                items: track.items.filter(item => item.title !== courseData.title)
+              };
+            }
+            return track;
+          });
+
+          return tracksWithoutItem.map(track => {
+            if (track.id === trackId) {
+              return {
+                ...track,
+                items: [...track.items, { ...courseData, targetLevel: levelId }]
+              };
+            }
+            return track;
+          });
+        } else {
+          // New item from course list
+          return prevTracks.map(track => {
+            if (track.id === trackId) {
+              return {
+                ...track,
+                items: [...track.items, { ...courseData, targetLevel: levelId }]
+              };
+            }
+            return track;
+          });
+        }
       });
     }
 
@@ -174,15 +210,6 @@ const TrainingGrid: React.FC = () => {
       <div className="min-h-screen bg-gray-100">
         <Container>
           <div className="bg-white p-4 rounded-lg">
-            <div className="grid-container">
-              <Header
-                variant="h2"
-                description="Drag and drop courses to create learning paths"
-              >
-                Tracks
-              </Header>
-            </div>
-            
             <div className="flex">
               <div className="w-[320px] p-4 bg-white shadow-lg overflow-y-auto">
                 <TrackManager tracks={tracks} onTracksChange={handleTracksChange} />
@@ -192,10 +219,10 @@ const TrainingGrid: React.FC = () => {
               </div>
               
               <div className="flex-1 p-4 overflow-x-auto">
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden relative">
                   <div className="overflow-auto max-h-[calc(100vh-180px)]">
                     <table className="w-full border-collapse">
-                      <thead className="sticky top-0 z-10">
+                      <thead className="sticky top-0 z-20 bg-white">
                         <tr>
                           <th className="p-4 bg-[#0f1b2a] border border-[#e9ebed] w-[150px] min-w-[150px] sticky left-0 z-20">
                             <div className="text-white font-semibold">

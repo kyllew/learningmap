@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Track, LEVELS } from '@/types/TrainingMap';
 import initialTracksData from '@/data/aws-learning-map-init.json';
 
@@ -26,11 +26,9 @@ interface MergedCell {
   content: string;
 }
 
-const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) => {
+export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) => {
   const [isLoading, setIsLoading] = useState(false);
-
-  // Add a reference to the file input
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadInitialTracks = () => {
     try {
@@ -41,21 +39,16 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
   };
 
   const exportToJson = () => {
-    try {
-      const dataStr = JSON.stringify(tracks, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `aws-learning-map-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error exporting JSON:', error);
-    }
+    const jsonString = JSON.stringify(tracks, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tracks.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const exportToHtml = () => {
@@ -324,92 +317,93 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
   };
 
   const handleImportClick = () => {
-    // Trigger the hidden file input click
     fileInputRef.current?.click();
   };
 
   const importFromJson = (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const file = event.target.files?.[0];
-      if (!file) return;
-
+    const file = event.target.files?.[0];
+    if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const content = e.target?.result as string;
-          const importedTracks = JSON.parse(content) as Track[];
+          const importedTracks = JSON.parse(e.target?.result as string) as Track[];
           onTracksChange(importedTracks);
-          // Reset the input value so the same file can be selected again
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
         } catch (error) {
-          console.error('Error parsing JSON:', error);
-          alert('Invalid JSON file format');
+          console.error('Error parsing JSON file:', error);
         }
       };
       reader.readAsText(file);
-    } catch (error) {
-      console.error('Error importing JSON:', error);
     }
+  };
+
+  const handleAddTrack = () => {
+    const newTrack = {
+      id: `track-${tracks.length + 1}`,
+      name: `Track ${tracks.length + 1}`,
+      items: []
+    };
+    onTracksChange([...tracks, newTrack]);
   };
 
   return (
     <Container>
       <SpaceBetween size="l">
-        <Header
-          variant="h2"
-          counter={`(${tracks.length})`}
-        >
-          Track Management
-        </Header>
-
-        <Alert type="info">
-          You can export your current tracks to JSON or HTML format, or import tracks from a JSON file.
-        </Alert>
-
-        <SpaceBetween size="xs">
-          <Button
-            iconName="add-plus"
-            onClick={loadInitialTracks}
-            variant="primary"
-            fullWidth
+        <Box>
+          <Header
+            variant="h2"
+            description="Drag and drop courses to create learning paths"
+            counter={`(${tracks.length})`}
           >
-            Load 6 tracks
-          </Button>
+            Track Management
+          </Header>
 
-          <Button
-            iconName="download"
-            onClick={exportToJson}
-            fullWidth
-          >
-            Export to JSON
-          </Button>
+          <Alert type="info">
+            You can export your current tracks to JSON or HTML format, or import tracks from a JSON file.
+          </Alert>
 
-          <Button
-            iconName="file"
-            onClick={exportToHtml}
-            fullWidth
-          >
-            Export to HTML
-          </Button>
+          <SpaceBetween size="xs">
+            <Button
+              iconName="add-plus"
+              onClick={loadInitialTracks}
+              variant="primary"
+              fullWidth
+            >
+              Load 6 tracks
+            </Button>
 
-          <Button
-            iconName="upload"
-            onClick={handleImportClick}
-            fullWidth
-          >
-            Import from JSON
-          </Button>
-          
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            onChange={importFromJson}
-            style={{ display: 'none' }}
-          />
-        </SpaceBetween>
+            <Button
+              iconName="download"
+              onClick={exportToJson}
+              fullWidth
+            >
+              Export to JSON
+            </Button>
+
+            <Button
+              iconName="file"
+              onClick={exportToHtml}
+              fullWidth
+            >
+              Export to HTML
+            </Button>
+
+            <Button
+              iconName="upload"
+              onClick={handleImportClick}
+              fullWidth
+            >
+              Import from JSON
+            </Button>
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={importFromJson}
+              style={{ display: 'none' }}
+            />
+          </SpaceBetween>
+        </Box>
 
         <Box>
           <SpaceBetween size="xs">
