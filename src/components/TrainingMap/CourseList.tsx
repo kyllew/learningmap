@@ -5,7 +5,6 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { TrackItem } from '@/types/TrainingMap';
 import dynamic from 'next/dynamic';
-import { DragEndEvent } from '@dnd-kit/core';
 
 // Import Cloudscape components
 import ExpandableSection from "@cloudscape-design/components/expandable-section";
@@ -22,16 +21,8 @@ const CourseList: React.FC = () => {
   const [isCoursesExpanded, setIsCoursesExpanded] = useState(false);
   const [isExamPrepExpanded, setIsExamPrepExpanded] = useState(false);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over) {
-      // Handle the drag end event, e.g., update the grid
-      console.log('Dragged item:', active.id, 'to:', over.id);
-    }
-  };
-
   return (
-    <Box padding="n" className="course-list-container max-h-[calc(100vh-200px)] overflow-y-auto">
+    <Box padding="n">
       <SpaceBetween size="l">
         {/* Certifications Section */}
         <ExpandableSection 
@@ -40,13 +31,11 @@ const CourseList: React.FC = () => {
           onChange={({ detail }) => setIsCertificationsExpanded(detail.expanded)}
           variant="container"
         >
-          <div className="max-h-[300px] overflow-y-auto">
-            <SpaceBetween size="xs">
-              {AWS_CERTIFICATIONS.map((cert) => (
-                <DraggableCourseItem key={cert.title} course={cert} />
-              ))}
-            </SpaceBetween>
-          </div>
+          <SpaceBetween size="xs">
+            {AWS_CERTIFICATIONS.map((cert) => (
+              <DraggableCourseItem key={cert.title} course={cert} />
+            ))}
+          </SpaceBetween>
         </ExpandableSection>
 
         {/* Courses Section */}
@@ -56,13 +45,11 @@ const CourseList: React.FC = () => {
           onChange={({ detail }) => setIsCoursesExpanded(detail.expanded)}
           variant="container"
         >
-          <div className="max-h-[300px] overflow-y-auto">
-            <SpaceBetween size="xs">
-              {TRAINING_COURSES.map((course) => (
-                <DraggableCourseItem key={course.title} course={course} />
-              ))}
-            </SpaceBetween>
-          </div>
+          <SpaceBetween size="xs">
+            {TRAINING_COURSES.map((course) => (
+              <DraggableCourseItem key={course.title} course={course} />
+            ))}
+          </SpaceBetween>
         </ExpandableSection>
 
         {/* Exam Prep Section */}
@@ -72,13 +59,11 @@ const CourseList: React.FC = () => {
           onChange={({ detail }) => setIsExamPrepExpanded(detail.expanded)}
           variant="container"
         >
-          <div className="max-h-[300px] overflow-y-auto">
-            <SpaceBetween size="xs">
-              {EXAM_PREP_COURSES.map((course) => (
-                <DraggableCourseItem key={course.title} course={course} />
-              ))}
-            </SpaceBetween>
-          </div>
+          <SpaceBetween size="xs">
+            {EXAM_PREP_COURSES.map((course) => (
+              <DraggableCourseItem key={course.title} course={course} />
+            ))}
+          </SpaceBetween>
         </ExpandableSection>
       </SpaceBetween>
     </Box>
@@ -88,38 +73,34 @@ const CourseList: React.FC = () => {
 // DraggableCourseItem component
 const DraggableCourseItem: React.FC<{ course: TrackItem }> = ({ course }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: course.title,
-    data: course
+    id: `course-list-${course.title}`,
+    data: {
+      source: 'course-list',
+      ...course
+    }
   });
 
-  const style = transform ? {
-    transform: CSS.Transform.toString(transform),
-  } : undefined;
-
-  // Remove aria-describedby from attributes spread
-  const { 'aria-describedby': _, ...restAttributes } = attributes;
-
-  // Use a static or consistent ID for aria-describedby
-  const describedById = `description-${course.title.replace(/\s+/g, '-')}`;
+  const style = {
+    ...transform ? {
+      transform: CSS.Transform.toString(transform),
+    } : {},
+    opacity: isDragging ? 0 : 1,
+    transition: 'all 0.2s ease-in-out',
+  };
 
   return (
     <div 
       ref={setNodeRef} 
-      style={{
-        ...style,
-        opacity: isDragging ? 0.3 : 1,
-        transition: 'all 0.2s ease-in-out',
-      }} 
+      style={style}
       className={`
         p-2 rounded-lg border border-gray-200
         bg-white cursor-grab active:cursor-grabbing
         hover:shadow-md hover:border-blue-300
         transform hover:scale-[1.02]
         transition-all duration-200
-        ${isDragging ? 'shadow-2xl scale-105' : ''}
+        ${isDragging ? 'pointer-events-none' : ''}
       `}
-      aria-describedby={describedById}
-      {...restAttributes} 
+      {...attributes} 
       {...listeners}
     >
       <SpaceBetween size="xs">

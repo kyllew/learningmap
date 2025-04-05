@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Track, LEVELS } from '@/types/TrainingMap';
 import initialTracksData from '@/data/aws-learning-map-init.json';
 
@@ -11,6 +11,8 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Button from "@cloudscape-design/components/button";
 import Box from "@cloudscape-design/components/box";
 import Alert from "@cloudscape-design/components/alert";
+import Link from "@cloudscape-design/components/link";
+import Badge from "@cloudscape-design/components/badge";
 
 // Type assertion for the imported JSON data
 const typedInitialTracksData = initialTracksData as Track[];
@@ -26,9 +28,29 @@ interface MergedCell {
   content: string;
 }
 
-export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) => {
+const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const importFromJson = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target?.result as string);
+          onTracksChange(json);
+        } catch (error) {
+          console.error('Error importing JSON:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
 
   const loadInitialTracks = () => {
     try {
@@ -39,16 +61,21 @@ export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChan
   };
 
   const exportToJson = () => {
-    const jsonString = JSON.stringify(tracks, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tracks.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      const dataStr = JSON.stringify(tracks, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `aws-learning-map-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting JSON:', error);
+    }
   };
 
   const exportToHtml = () => {
@@ -316,61 +343,29 @@ export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChan
     }
   };
 
-  const handleImportClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const importFromJson = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const importedTracks = JSON.parse(e.target?.result as string) as Track[];
-          onTracksChange(importedTracks);
-        } catch (error) {
-          console.error('Error parsing JSON file:', error);
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const handleAddTrack = () => {
-    const newTrack = {
-      id: `track-${tracks.length + 1}`,
-      name: `Track ${tracks.length + 1}`,
-      items: []
-    };
-    onTracksChange([...tracks, newTrack]);
-  };
-
   return (
     <Container>
+      <Header
+        variant="h2"
+        description="Drag and drop courses to create learning paths"
+      >
+        Tracks
+      </Header>
       <SpaceBetween size="l">
+        <Alert type="info">
+          You can export your current tracks to JSON or HTML format, or import tracks from a JSON file.
+        </Alert>
         <Box>
-          <Header
-            variant="h2"
-            description="Drag and drop courses to create learning paths"
-            counter={`(${tracks.length})`}
-          >
-            Track Management
-          </Header>
-
-          <Alert type="info">
-            You can export your current tracks to JSON or HTML format, or import tracks from a JSON file.
-          </Alert>
-
           <SpaceBetween size="xs">
             <Button
               iconName="add-plus"
               onClick={loadInitialTracks}
+              loading={isLoading}
               variant="primary"
               fullWidth
             >
-              Load 6 tracks
+              Load Initial Tracks
             </Button>
-
             <Button
               iconName="download"
               onClick={exportToJson}
@@ -378,7 +373,6 @@ export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChan
             >
               Export to JSON
             </Button>
-
             <Button
               iconName="file"
               onClick={exportToHtml}
@@ -386,7 +380,6 @@ export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChan
             >
               Export to HTML
             </Button>
-
             <Button
               iconName="upload"
               onClick={handleImportClick}
@@ -394,7 +387,6 @@ export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChan
             >
               Import from JSON
             </Button>
-            
             <input
               ref={fileInputRef}
               type="file"
@@ -404,7 +396,6 @@ export const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChan
             />
           </SpaceBetween>
         </Box>
-
         <Box>
           <SpaceBetween size="xs">
             <Box variant="awsui-key-label">Current tracks</Box>

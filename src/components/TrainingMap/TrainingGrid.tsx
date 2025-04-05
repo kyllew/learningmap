@@ -17,19 +17,16 @@ import { Track, TrackItem, TRACKS, LEVELS } from '@/types/TrainingMap';
 import CourseList from './CourseList';
 import TrainingCell from './TrainingCell';
 import TrackManager from './TrackManager';
-import DndProvider from '@/components/providers/DndProvider';
 
 // Import Cloudscape components
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Box from "@cloudscape-design/components/box";
-import SpaceBetween from "@cloudscape-design/components/space-between";
-import Badge from "@cloudscape-design/components/badge";
 
 const TrainingGrid: React.FC = () => {
   const [tracks, setTracks] = useState<Track[]>(TRACKS);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [activeItem, setActiveItem] = useState<any>(null);
+  const [activeCourse, setActiveCourse] = useState<TrackItem | null>(null);
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -46,32 +43,26 @@ const TrainingGrid: React.FC = () => {
 
   const sensors = useSensors(mouseSensor, touchSensor);
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event;
     setActiveId(active.id as string);
-    setActiveItem(active.data.current);
-  };
+    setActiveCourse(active.data.current as TrackItem);
+  }, []);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (over) {
-      const { trackId, levelId } = over.data.current as { trackId: string; levelId: string };
+    setActiveId(null);
+    setActiveCourse(null);
+
+    if (!over) return;
+
+    try {
       const courseData = active.data.current as TrackItem;
       const sourceTrackId = (active.data.current as any)?.sourceTrackId;
-      
+      const { trackId, levelId } = over.data.current as { trackId: string; levelId: string };
+
       setTracks(prevTracks => {
-        // Check if the course already exists in the target cell
-        const targetTrack = prevTracks.find(track => track.id === trackId);
-        const courseExists = targetTrack?.items.some(
-          item => item.title === courseData.title && item.targetLevel === levelId
-        );
-
-        if (courseExists) {
-          // If course already exists in the target cell, don't add it again
-          return prevTracks;
-        }
-
         if (sourceTrackId) {
           // Moving from one cell to another
           const tracksWithoutItem = prevTracks.map(track => {
@@ -106,11 +97,10 @@ const TrainingGrid: React.FC = () => {
           });
         }
       });
+    } catch (error) {
+      console.error('Error in handleDragEnd:', error);
     }
-
-    setActiveId(null);
-    setActiveItem(null);
-  };
+  }, []);
 
   const handleRemoveCourse = useCallback((trackId: string, courseTitle: string) => {
     setTracks(prevTracks => {
@@ -158,9 +148,15 @@ const TrainingGrid: React.FC = () => {
         },
       },
     }),
+    dragSource: ({ source }: { source: { data: { current: { source?: string } } } }) => {
+      // If the source is from the course list, disable the return animation
+      if (source?.data?.current?.source === 'course-list') {
+        return false;
+      }
+      return true;
+    }
   };
 
-  // Modify the DraggingOverlay component
   const DraggingOverlay = ({ course }: { course: TrackItem | null }) => {
     if (!course) return null;
     
@@ -170,61 +166,47 @@ const TrainingGrid: React.FC = () => {
           fixed pointer-events-none
           bg-white rounded-lg shadow-2xl
           border-2 border-blue-400
-          p-4 w-[300px]
+          p-4
           transform scale-105
           transition-transform duration-200
           z-50
         `}
       >
-        <div className="flex flex-col">
-          <span className="font-medium text-sm mb-2 text-blue-600">
-            {course.title}
-          </span>
-          <div className="flex items-center gap-2">
-            <span className="inline-block bg-gray-100 px-2 py-0.5 rounded text-xs">
-              {course.duration}
-            </span>
-            <span
-              className={`
-                inline-block px-2 py-0.5 rounded text-xs
-                ${course.level === 'fundamental' ? 'bg-blue-100 text-blue-800' :
-                  course.level === 'associate' ? 'bg-green-100 text-green-800' :
-                  'bg-purple-100 text-purple-800'}
-              `}
-            >
-              {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-            </span>
-          </div>
-        </div>
+        <span className="font-medium text-sm text-blue-600">
+          {course.title}
+        </span>
       </div>
     );
   };
 
   return (
-    <DndProvider 
-      onDragStart={handleDragStart} 
+    <DndContext 
+      sensors={sensors} 
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      activeId={activeId}
-      activeItem={activeItem}
     >
       <div className="min-h-screen bg-gray-100">
         <Container>
           <div className="bg-white p-4 rounded-lg">
             <div className="flex">
-              <div className="w-[320px] p-4 bg-white shadow-lg overflow-y-auto">
-                <TrackManager tracks={tracks} onTracksChange={handleTracksChange} />
-                <div className="mt-4">
+              {/* Left Panel - adjusted width and styling */}
+              <div className="w-[320px] h-[calc(100vh-180px)] flex flex-col bg-white shadow-lg">
+                <div className="p-4 flex-shrink-0">
+                  <TrackManager tracks={tracks} onTracksChange={handleTracksChange} />
+                </div>
+                <div className="flex-1 p-4 overflow-y-auto">
                   <CourseList />
                 </div>
               </div>
               
+              {/* Grid - updated font styles */}
               <div className="flex-1 p-4 overflow-x-auto">
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden relative">
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <div className="overflow-auto max-h-[calc(100vh-180px)]">
                     <table className="w-full border-collapse">
-                      <thead className="sticky top-0 z-20 bg-white">
+                      <thead className="sticky top-0 z-30">
                         <tr>
-                          <th className="p-4 bg-[#0f1b2a] border border-[#e9ebed] w-[150px] min-w-[150px] sticky left-0 z-20">
+                          <th className="p-4 bg-[#0f1b2a] border border-[#e9ebed] w-[150px] min-w-[150px] sticky left-0 z-40">
                             <div className="text-white font-semibold">
                               Levels
                             </div>
@@ -232,7 +214,7 @@ const TrainingGrid: React.FC = () => {
                           {tracks.map(track => (
                             <th 
                               key={track.id} 
-                              className="p-4 bg-[#0f1b2a] text-center whitespace-normal border border-[#e9ebed]"
+                              className="p-4 bg-[#0f1b2a] text-center whitespace-normal border border-[#e9ebed] z-30"
                             >
                               <div className="text-white font-semibold">
                                 {track.name}
@@ -286,7 +268,11 @@ const TrainingGrid: React.FC = () => {
           </div>
         </Container>
       </div>
-    </DndProvider>
+      
+      <DragOverlay>
+        {activeCourse && <DraggingOverlay course={activeCourse} />}
+      </DragOverlay>
+    </DndContext>
   );
 };
 

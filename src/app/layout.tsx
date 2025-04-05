@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="min-h-screen bg-gray-100">
           <header className="bg-[#0972d3] text-white p-4">
-            <h1 className="text-2xl font-bold">AWS ILT Classroom</h1>
+            <h1 className="text-2xl font-bold">AWS ILT Classroom - Exam Preparations - Cert</h1>
           </header>
           <main>
             <ClientLayout>

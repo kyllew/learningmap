@@ -15,62 +15,84 @@ interface TrainingCellProps {
   isMerged?: boolean;
 }
 
-interface DraggableCourseItemProps {
-  course: TrackItem;
+// Create a separate component for draggable course items
+const DraggableCourseItem: React.FC<{
+  item: TrackItem;
   trackId: string;
   onRemoveCourse: (trackId: string, courseTitle: string) => void;
-}
-
-const DraggableCourseItem: React.FC<DraggableCourseItemProps> = ({ 
-  course, 
-  trackId,
-  onRemoveCourse 
-}) => {
+}> = ({ item, trackId, onRemoveCourse }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: course.title,
+    id: `${trackId}-${item.title}`,
     data: {
-      ...course,
+      ...item,
       sourceTrackId: trackId
     }
   });
 
-  const style = transform ? {
-    transform: CSS.Transform.toString(transform),
-  } : undefined;
+  const style = {
+    ...transform ? {
+      transform: CSS.Transform.toString(transform),
+    } : {},
+    opacity: isDragging ? 0 : 1,
+    transition: 'all 0.2s ease-in-out',
+  };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
       {...attributes}
+      {...listeners}
       className={`
-        p-2 rounded-lg border border-gray-200
-        bg-white cursor-grab active:cursor-grabbing
-        hover:shadow-md hover:border-blue-300
-        transform hover:scale-[1.02]
-        transition-all duration-200
-        ${isDragging ? 'opacity-0' : ''}
+        relative group bg-white p-3 rounded-lg
+        border border-[#e9ebed]
+        transition-all duration-300 ease-in-out
+        hover:shadow-lg hover:scale-[1.02]
+        hover:border-[#0972d3]
+        cursor-grab active:cursor-grabbing
+        ${isDragging ? 'pointer-events-none' : ''}
       `}
     >
-      <SpaceBetween size="xs">
-        <Link href={course.url} external>
-          {course.title}
+      <button
+        onClick={() => onRemoveCourse(trackId, item.title)}
+        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 
+                 p-1 rounded-full bg-red-100 hover:bg-red-200 
+                 transition-all duration-300 ease-in-out
+                 transform group-hover:rotate-90"
+      >
+        <svg
+          className="w-3 h-3 text-red-600"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <Box variant="awsui-key-label">
+        <Link
+          href={item.url}
+          external
+          className="block mb-2"
+        >
+          {item.title}
         </Link>
-        <Box>
-          <SpaceBetween size="xs" direction="horizontal">
-            <Badge>{course.duration}</Badge>
-            <Badge 
-              color={
-                course.level === 'fundamental' ? 'blue' : 
-                course.level === 'associate' ? 'green' : 'grey'
-              }
-            >
-              {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-            </Badge>
-          </SpaceBetween>
-        </Box>
-      </SpaceBetween>
+        <SpaceBetween size="xs" direction="horizontal">
+          <Badge>{item.duration}</Badge>
+          <Badge 
+            color={
+              item.level === 'fundamental' ? 'blue' : 
+              item.level === 'associate' ? 'green' : 'red'
+            }
+          >
+            {item.level.charAt(0).toUpperCase() + item.level.slice(1)}
+          </Badge>
+        </SpaceBetween>
+      </Box>
     </div>
   );
 };
@@ -110,7 +132,7 @@ const TrainingCell: React.FC<TrainingCellProps> = ({
         {items.map((item, index) => (
           <DraggableCourseItem
             key={`${item.title}-${index}`}
-            course={item}
+            item={item}
             trackId={trackId}
             onRemoveCourse={onRemoveCourse}
           />
