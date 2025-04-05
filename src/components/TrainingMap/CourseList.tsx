@@ -88,6 +88,9 @@ const DraggableCourseItem: React.FC<{ course: TrackItem }> = ({ course }) => {
     transition: 'all 0.2s ease-in-out',
   };
 
+  // Create a stable ID based on the course title
+  const describedById = `dnd-desc-${course.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
   return (
     <div 
       ref={setNodeRef} 
@@ -102,6 +105,7 @@ const DraggableCourseItem: React.FC<{ course: TrackItem }> = ({ course }) => {
       `}
       {...attributes} 
       {...listeners}
+      aria-describedby={describedById}
     >
       <SpaceBetween size="xs">
         <Link href={course.url} external>
