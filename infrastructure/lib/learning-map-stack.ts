@@ -14,6 +14,8 @@ import { Construct } from 'constructs';
 
 // Define repository name as a constant
 const ECR_REPOSITORY_NAME = 'learningmap';
+const ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
+const REGION = process.env.CDK_DEFAULT_REGION;
 
 export class LearningMapStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -49,22 +51,23 @@ export class LearningMapStack extends cdk.Stack {
       dockerEnabledForSynth: true
     });
 
-    // Add build stage
+    // Create a build stage with a stack
     class BuildStage extends cdk.Stage {
       constructor(scope: Construct, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
         // Create a stack for the build stage
-        const buildStack = new cdk.Stack(this, 'BuildStack', {
-          env: props?.env
-        });
+        const buildStack = new cdk.Stack(this, 'BuildStack');
+
+        // Add any resources needed for the build stage here
+        // This can be empty, we just need a stack to satisfy CDK's requirements
       }
     }
 
     const buildStage = pipeline.addStage(new BuildStage(this, 'BuildStage', {
       env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION
+        account: ACCOUNT,
+        region: REGION
       }
     }));
 
@@ -77,13 +80,13 @@ export class LearningMapStack extends cdk.Stack {
           privileged: true,
           environmentVariables: {
             REPOSITORY_URI: {
-              value: '358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap'
+              value: repository.repositoryUri
             },
             CONTAINER_NAME: {
               value: ECR_REPOSITORY_NAME
             },
             AWS_DEFAULT_REGION: {
-              value: 'us-east-1'
+              value: REGION || 'us-east-1'
             }
           }
         },
@@ -91,10 +94,10 @@ export class LearningMapStack extends cdk.Stack {
           'cd $CODEBUILD_SRC_DIR',
           'echo "Current directory: $(pwd)"',
           'ls -la',
-          'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 358719591151.dkr.ecr.us-east-1.amazonaws.com',
-          'docker build -t learningmap .',
-          'docker tag learningmap:latest 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest',
-          'docker push 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest'
+          'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI',
+          'docker build -t $CONTAINER_NAME .',
+          'docker tag $CONTAINER_NAME:latest $REPOSITORY_URI:latest',
+          'docker push $REPOSITORY_URI:latest'
         ],
         rolePolicyStatements: [
           new iam.PolicyStatement({
@@ -120,22 +123,16 @@ export class LearningMapStack extends cdk.Stack {
     // Add deployment stage
     const deployStage = new LearningMapStage(this, 'Deploy', {
       env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION
-      },
-      ecrRepository: repository // Pass the repository to the deployment stage
+        account: ACCOUNT,
+        region: REGION
+      }
     });
     pipeline.addStage(deployStage);
   }
 }
 
-// Update the stage to accept the repository
-interface LearningMapStageProps extends cdk.StageProps {
-  ecrRepository: ecr.IRepository;
-}
-
 class LearningMapStage extends cdk.Stage {
-  constructor(scope: Construct, id: string, props: LearningMapStageProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StageProps) {
     super(scope, id, props);
 
     // Create a new stack for the stage
@@ -155,8 +152,8 @@ class LearningMapStage extends cdk.Stage {
       containerInsights: true
     });
 
-    // Use the passed repository
-    const repository = props.ecrRepository;
+    // Construct the repository URI using account and region
+    const repositoryUri = `${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}`;
 
     // ECS Service
     const taskDefinition = new ecs.FargateTaskDefinition(serviceStack, 'LearningMapTaskDef', {
@@ -165,7 +162,7 @@ class LearningMapStage extends cdk.Stage {
     });
 
     const container = taskDefinition.addContainer('learningmap', {
-      image: ecs.ContainerImage.fromEcrRepository(repository),
+      image: ecs.ContainerImage.fromRegistry(repositoryUri),
       containerName: ECR_REPOSITORY_NAME,
       portMappings: [{ containerPort: 3000 }],
       environment: {
