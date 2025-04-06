@@ -145,36 +145,37 @@ class LearningMapStage extends cdk.Stage {
     });
 
     // ECS Service
-    const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
-      cluster,
+    const taskDefinition = new ecs.FargateTaskDefinition(serviceStack, 'LearningMapTaskDef', {
       memoryLimitMiB: 1024,
       cpu: 512,
-      desiredCount: 1,
-      taskImageOptions: {
-        image: ecs.ContainerImage.fromEcrRepository(repository),
-        containerName: 'learningmap',
-        containerPort: 3000,
-        environment: {
-          NODE_ENV: 'production',
-          PORT: '3000',
-          HOSTNAME: '0.0.0.0'
-        }
+    });
+
+    const container = taskDefinition.addContainer('learningmap', {
+      image: ecs.ContainerImage.fromEcrRepository(repository),
+      containerName: 'learningmap',
+      portMappings: [{ containerPort: 3000 }],
+      environment: {
+        NODE_ENV: 'production',
+        PORT: '3000',
+        HOSTNAME: '0.0.0.0'
       },
+      healthCheck: {
+        command: ['CMD-SHELL', 'curl -f http://localhost:3000/ || exit 1'],
+        interval: cdk.Duration.seconds(30),
+        timeout: cdk.Duration.seconds(5),
+        retries: 3,
+        startPeriod: cdk.Duration.seconds(60)
+      }
+    });
+
+    const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
+      cluster,
+      taskDefinition,
+      desiredCount: 1,
       assignPublicIp: false,
       publicLoadBalancer: true,
       healthCheckGracePeriod: cdk.Duration.seconds(60)
     });
-
-    // Configure container health check
-    if (fargateService.taskDefinition.defaultContainer) {
-      fargateService.taskDefinition.defaultContainer.addOverride('HealthCheck', {
-        Command: ['CMD-SHELL', 'curl -f http://localhost:3000/ || exit 1'],
-        Interval: 30,
-        Timeout: 5,
-        Retries: 3,
-        StartPeriod: 60
-      });
-    }
 
     // Configure target group health check
     fargateService.targetGroup.configureHealthCheck({
