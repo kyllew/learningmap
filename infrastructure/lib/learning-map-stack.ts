@@ -138,11 +138,11 @@ class LearningMapStage extends cdk.Stage {
     });
 
     // ECR Repository
-    const repository = new ecr.Repository(serviceStack, 'LearningMapRepo', {
-      repositoryName: 'learningmap',
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-      imageScanOnPush: true
-    });
+    const repository = ecr.Repository.fromRepositoryName(
+      serviceStack,
+      'LearningMapRepo',
+      'learningmap'
+    );
 
     // ECS Service
     const taskDefinition = new ecs.FargateTaskDefinition(serviceStack, 'LearningMapTaskDef', {
