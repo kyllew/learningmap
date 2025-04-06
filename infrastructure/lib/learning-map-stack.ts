@@ -161,18 +161,18 @@ class LearningMapStage extends cdk.Stage {
         }
       },
       assignPublicIp: false,
-      publicLoadBalancer: true
+      publicLoadBalancer: true,
+      healthCheckGracePeriod: cdk.Duration.seconds(60)
     });
 
-    // Add container health check to the task definition
-    const containerDef = fargateService.taskDefinition.defaultContainer;
-    if (containerDef) {
-      containerDef.addHealthCheck({
-        command: ['CMD-SHELL', 'curl -f http://localhost:3000/ || exit 1'],
-        interval: cdk.Duration.seconds(30),
-        timeout: cdk.Duration.seconds(5),
-        retries: 3,
-        startPeriod: cdk.Duration.seconds(60)
+    // Configure container health check
+    if (fargateService.taskDefinition.defaultContainer) {
+      fargateService.taskDefinition.defaultContainer.addOverride('HealthCheck', {
+        Command: ['CMD-SHELL', 'curl -f http://localhost:3000/ || exit 1'],
+        Interval: 30,
+        Timeout: 5,
+        Retries: 3,
+        StartPeriod: 60
       });
     }
 
