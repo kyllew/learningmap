@@ -19,81 +19,15 @@ export class LearningMapStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Create a Lambda function to check if ECR repository exists
-    const checkEcrFunction = new lambda.Function(this, 'CheckEcrFunction', {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromInline(`
-        const AWS = require('aws-sdk');
-        const ecr = new AWS.ECR();
-        
-        exports.handler = async (event) => {
-          const repositoryName = event.ResourceProperties.RepositoryName;
-          
-          try {
-            await ecr.describeRepositories({ repositoryNames: [repositoryName] }).promise();
-            return {
-              Data: { Exists: true }
-            };
-          } catch (error) {
-            if (error.code === 'RepositoryNotFoundException') {
-              return {
-                Data: { Exists: false }
-              };
-            }
-            throw error;
-          }
-        };
-      `),
-      timeout: cdk.Duration.seconds(30)
-    });
-
-    // Grant the Lambda function permission to check ECR repositories
-    checkEcrFunction.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['ecr:DescribeRepositories'],
-      resources: ['*']
-    }));
-
-    // Create a custom resource to check if ECR repository exists
-    const checkEcrRepo = new cr.AwsCustomResource(this, 'CheckEcrRepo', {
-      onCreate: {
-        service: 'Lambda',
-        action: 'invoke',
-        parameters: {
-          FunctionName: checkEcrFunction.functionName,
-          Payload: JSON.stringify({
-            ResourceProperties: {
-              RepositoryName: ECR_REPOSITORY_NAME
-            }
-          })
-        },
-        physicalResourceId: cr.PhysicalResourceId.of('ecrcheck'),
-      },
-      policy: cr.AwsCustomResourcePolicy.fromStatements([
-        new iam.PolicyStatement({
-          actions: ['lambda:InvokeFunction'],
-          resources: [checkEcrFunction.functionArn]
-        })
-      ])
-    });
-
-    // Get the result from the custom resource
-    const ecrExists = checkEcrRepo.getResponseField('Payload.Data.Exists');
-
-    // Only create the ECR repository if it doesn't exist
-    let repository: ecr.IRepository;
-    if (!ecrExists) {
-      repository = new ecr.Repository(this, 'LearningMapRepo', {
-        repositoryName: ECR_REPOSITORY_NAME,
-        removalPolicy: cdk.RemovalPolicy.RETAIN,
-        imageScanOnPush: true
-      });
-    } else {
-      repository = ecr.Repository.fromRepositoryAttributes(this, 'ExistingLearningMapRepo', {
+    // Reference existing ECR repository
+    const repository = ecr.Repository.fromRepositoryAttributes(
+      this,
+      'ExistingECRRepo',
+      {
         repositoryName: ECR_REPOSITORY_NAME,
         repositoryArn: `arn:aws:ecr:us-east-1:358719591151:repository/${ECR_REPOSITORY_NAME}`
-      });
-    }
+      }
+    );
 
     // Pipeline
     const pipeline = new pipelines.CodePipeline(this, 'LearningMapPipeline', {
@@ -127,16 +61,6 @@ export class LearningMapStack extends cdk.Stack {
         const buildStack = new cdk.Stack(this, 'BuildStack', {
           env: props?.env
         });
-
-        // Reference the existing ECR repository
-        const repository = ecr.Repository.fromRepositoryName(
-          buildStack,
-          'ExistingLearningMapRepo',
-          ECR_REPOSITORY_NAME
-        );
-
-        // Grant CodeBuild permissions to push to the repository
-        repository.grantPullPush(new iam.ServicePrincipal('codebuild.amazonaws.com'));
       }
     }
 
@@ -147,7 +71,7 @@ export class LearningMapStack extends cdk.Stack {
       }
     }));
 
-    // Add build step with updated permissions
+    // Add build step
     buildStage.addPost(
       new pipelines.CodeBuildStep('BuildAndPushImage', {
         projectName: 'LearningMapBuild',
