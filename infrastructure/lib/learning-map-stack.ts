@@ -147,19 +147,43 @@ class LearningMapStage extends cdk.Stage {
     // ECS Service
     const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
       cluster,
-      memoryLimitMiB: 512,
-      cpu: 256,
+      memoryLimitMiB: 1024,
+      cpu: 512,
       desiredCount: 1,
       taskImageOptions: {
         image: ecs.ContainerImage.fromEcrRepository(repository),
         containerName: 'learningmap',
-        containerPort: 80,
+        containerPort: 3000,
         environment: {
-          NODE_ENV: 'production'
+          NODE_ENV: 'production',
+          PORT: '3000',
+          HOSTNAME: '0.0.0.0'
         }
       },
       assignPublicIp: false,
       publicLoadBalancer: true
+    });
+
+    // Add container health check to the task definition
+    const containerDef = fargateService.taskDefinition.defaultContainer;
+    if (containerDef) {
+      containerDef.addHealthCheck({
+        command: ['CMD-SHELL', 'curl -f http://localhost:3000/ || exit 1'],
+        interval: cdk.Duration.seconds(30),
+        timeout: cdk.Duration.seconds(5),
+        retries: 3,
+        startPeriod: cdk.Duration.seconds(60)
+      });
+    }
+
+    // Configure target group health check
+    fargateService.targetGroup.configureHealthCheck({
+      path: '/',
+      healthyHttpCodes: '200-399',
+      interval: cdk.Duration.seconds(30),
+      timeout: cdk.Duration.seconds(5),
+      healthyThresholdCount: 2,
+      unhealthyThresholdCount: 3
     });
   }
 }
