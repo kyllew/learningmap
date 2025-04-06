@@ -10,6 +10,9 @@ import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as pipelines from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 
+// Define repository name as a constant
+const ECR_REPOSITORY_NAME = 'learningmap';
+
 export class LearningMapStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -43,7 +46,7 @@ export class LearningMapStack extends cdk.Stack {
         super(scope, id, props);
 
         // Create a stack for the build stage
-        new cdk.Stack(this, 'BuildStack', {
+        const buildStack = new cdk.Stack(this, 'BuildStack', {
           env: props?.env
         });
       }
@@ -68,7 +71,7 @@ export class LearningMapStack extends cdk.Stack {
               value: '358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap'
             },
             CONTAINER_NAME: {
-              value: 'learningmap'
+              value: ECR_REPOSITORY_NAME
             },
             AWS_DEFAULT_REGION: {
               value: 'us-east-1'
@@ -99,7 +102,7 @@ export class LearningMapStack extends cdk.Stack {
               'ecr:CompleteLayerUpload',
               'ecr:PutImage'
             ],
-            resources: ['arn:aws:ecr:us-east-1:358719591151:repository/learningmap']
+            resources: [`arn:aws:ecr:us-east-1:358719591151:repository/${ECR_REPOSITORY_NAME}`]
           })
         ]
       })
@@ -137,11 +140,11 @@ class LearningMapStage extends cdk.Stage {
       containerInsights: true
     });
 
-    // ECR Repository
+    // Reference existing ECR repository
     const repository = ecr.Repository.fromRepositoryName(
       serviceStack,
       'LearningMapRepo',
-      'learningmap'
+      ECR_REPOSITORY_NAME
     );
 
     // ECS Service
@@ -152,7 +155,7 @@ class LearningMapStage extends cdk.Stage {
 
     const container = taskDefinition.addContainer('learningmap', {
       image: ecs.ContainerImage.fromEcrRepository(repository),
-      containerName: 'learningmap',
+      containerName: ECR_REPOSITORY_NAME,
       portMappings: [{ containerPort: 3000 }],
       environment: {
         NODE_ENV: 'production',
