@@ -19,15 +19,12 @@ export class LearningMapStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Reference existing ECR repository
-    const repository = ecr.Repository.fromRepositoryAttributes(
-      this,
-      'ExistingECRRepo',
-      {
-        repositoryName: ECR_REPOSITORY_NAME,
-        repositoryArn: `arn:aws:ecr:us-east-1:358719591151:repository/${ECR_REPOSITORY_NAME}`
-      }
-    );
+    // Create ECR Repository first
+    const repository = new ecr.Repository(this, 'LearningMapRepo', {
+      repositoryName: ECR_REPOSITORY_NAME,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      imageScanOnPush: true
+    });
 
     // Pipeline
     const pipeline = new pipelines.CodePipeline(this, 'LearningMapPipeline', {
@@ -114,7 +111,7 @@ export class LearningMapStack extends cdk.Stack {
               'ecr:CompleteLayerUpload',
               'ecr:PutImage'
             ],
-            resources: [`arn:aws:ecr:us-east-1:358719591151:repository/${ECR_REPOSITORY_NAME}`]
+            resources: [repository.repositoryArn]
           })
         ]
       })
@@ -125,14 +122,20 @@ export class LearningMapStack extends cdk.Stack {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
         region: process.env.CDK_DEFAULT_REGION
-      }
+      },
+      ecrRepository: repository // Pass the repository to the deployment stage
     });
     pipeline.addStage(deployStage);
   }
 }
 
+// Update the stage to accept the repository
+interface LearningMapStageProps extends cdk.StageProps {
+  ecrRepository: ecr.IRepository;
+}
+
 class LearningMapStage extends cdk.Stage {
-  constructor(scope: Construct, id: string, props?: cdk.StageProps) {
+  constructor(scope: Construct, id: string, props: LearningMapStageProps) {
     super(scope, id, props);
 
     // Create a new stack for the stage
@@ -152,15 +155,8 @@ class LearningMapStage extends cdk.Stage {
       containerInsights: true
     });
 
-    // Reference the existing repository
-    const repository = ecr.Repository.fromRepositoryAttributes(
-      serviceStack,
-      'ECRRepo',
-      {
-        repositoryName: ECR_REPOSITORY_NAME,
-        repositoryArn: `arn:aws:ecr:us-east-1:358719591151:repository/${ECR_REPOSITORY_NAME}`
-      }
-    );
+    // Use the passed repository
+    const repository = props.ecrRepository;
 
     // ECS Service
     const taskDefinition = new ecs.FargateTaskDefinition(serviceStack, 'LearningMapTaskDef', {
