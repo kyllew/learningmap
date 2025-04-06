@@ -49,6 +49,16 @@ export class LearningMapStack extends cdk.Stack {
         const buildStack = new cdk.Stack(this, 'BuildStack', {
           env: props?.env
         });
+
+        // Reference the existing ECR repository
+        const repository = ecr.Repository.fromRepositoryName(
+          buildStack,
+          'ExistingLearningMapRepo',
+          ECR_REPOSITORY_NAME
+        );
+
+        // Grant CodeBuild permissions to push to the repository
+        repository.grantPullPush(new iam.ServicePrincipal('codebuild.amazonaws.com'));
       }
     }
 
@@ -59,7 +69,7 @@ export class LearningMapStack extends cdk.Stack {
       }
     }));
 
-    // Add build step
+    // Add build step with updated permissions
     buildStage.addPost(
       new pipelines.CodeBuildStep('BuildAndPushImage', {
         projectName: 'LearningMapBuild',
@@ -125,7 +135,9 @@ class LearningMapStage extends cdk.Stage {
 
     // Create a new stack for the stage
     const serviceStack = new cdk.Stack(this, 'ServiceStack', {
-      env: props?.env
+      env: props?.env,
+      // Add a custom description to indicate this stack uses an existing ECR repository
+      description: 'Service stack that uses an existing ECR repository'
     });
 
     // VPC
@@ -141,10 +153,13 @@ class LearningMapStage extends cdk.Stage {
     });
 
     // Reference existing ECR repository
-    const repository = ecr.Repository.fromRepositoryName(
+    const repository = ecr.Repository.fromRepositoryAttributes(
       serviceStack,
-      'LearningMapRepo',
-      ECR_REPOSITORY_NAME
+      'ExistingLearningMapRepo',
+      {
+        repositoryName: ECR_REPOSITORY_NAME,
+        repositoryArn: `arn:aws:ecr:us-east-1:358719591151:repository/${ECR_REPOSITORY_NAME}`
+      }
     );
 
     // ECS Service
