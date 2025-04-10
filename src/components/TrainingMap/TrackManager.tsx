@@ -60,6 +60,19 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
     }
   };
 
+  const emptyTracks = () => {
+    try {
+      // Create empty tracks with the same structure but no items
+      const emptyTracksData = tracks.map(track => ({
+        ...track,
+        items: []
+      }));
+      onTracksChange(emptyTracksData);
+    } catch (error) {
+      console.error('Error emptying tracks:', error);
+    }
+  };
+
   const exportToJson = () => {
     try {
       const dataStr = JSON.stringify(tracks, null, 2);
@@ -365,6 +378,14 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
               fullWidth
             >
               Load Initial Tracks
+            </Button>
+            <Button
+              iconName="remove"
+              onClick={emptyTracks}
+              variant="normal"
+              fullWidth
+            >
+              Empty tracks
             </Button>
             <Button
               iconName="download"
