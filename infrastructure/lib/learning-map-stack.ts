@@ -169,29 +169,6 @@ class LearningMapStage extends cdk.Stage {
       executionRole: executionRole
     });
 
-    // Create a task role
-    const taskRole = new iam.Role(serviceStack, 'TaskRole', {
-      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
-    });
-
-    // Add permissions to the task role if needed
-    taskRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy')
-    );
-
-    taskDefinition.addToTaskRolePolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: [
-          'ecr:GetAuthorizationToken',
-          'ecr:BatchCheckLayerAvailability',
-          'ecr:GetDownloadUrlForLayer',
-          'ecr:BatchGetImage'
-        ],
-        resources: ['*']
-      })
-    );
-
     const container = taskDefinition.addContainer('learningmap', {
       image: ecs.ContainerImage.fromEcrRepository(
         ecr.Repository.fromRepositoryAttributes(serviceStack, 'ExistingRepo', {
@@ -213,32 +190,7 @@ class LearningMapStage extends cdk.Stage {
       }),
       essential: true,
       memoryLimitMiB: 512,
-      cpu: 256,
-      healthCheck: {
-        command: [
-          'CMD-SHELL',
-          'curl -f http://localhost:3000/ || exit 1'
-        ],
-        interval: cdk.Duration.seconds(60),
-        timeout: cdk.Duration.seconds(10),
-        retries: 3,
-        startPeriod: cdk.Duration.seconds(180)
-      }
-    });
-
-    // Install curl in the container
-    container.addUlimits({
-      name: ecs.UlimitName.NOFILE,
-      softLimit: 65536,
-      hardLimit: 65536
-    });
-
-    // Add container dependencies
-    taskDefinition.addContainer('healthcheck-sidecar', {
-      image: ecs.ContainerImage.fromRegistry('alpine'),
-      essential: false,
-      command: ['apk', 'add', '--no-cache', 'curl'],
-      user: 'root'
+      cpu: 256
     });
 
     const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
@@ -253,17 +205,25 @@ class LearningMapStage extends cdk.Stage {
       }
     });
 
-    // Configure target group health check with longer intervals
+    // Configure target group health check
     fargateService.targetGroup.configureHealthCheck({
       path: '/',
+      port: '3000',
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 5,
-      timeout: cdk.Duration.seconds(20),
+      timeout: cdk.Duration.seconds(30),
       interval: cdk.Duration.seconds(60),
       healthyHttpCodes: '200-399'
     });
 
-    // Add security group rule to allow inbound traffic on port 3000
+    // Add security group rules
     fargateService.service.connections.allowFromAnyIpv4(ec2.Port.tcp(3000), 'Allow inbound HTTP traffic');
+    
+    // Allow the task to pull from ECR
+    const ecrRepo = ecr.Repository.fromRepositoryAttributes(serviceStack, 'ExistingEcrRepo', {
+      repositoryArn: `arn:aws:ecr:${REGION}:${ACCOUNT}:repository/${ECR_REPOSITORY_NAME}`,
+      repositoryName: ECR_REPOSITORY_NAME
+    });
+    ecrRepo.grantPull(taskDefinition.executionRole!);
   }
 }

@@ -4,6 +4,9 @@ FROM public.ecr.aws/docker/library/node:18-alpine AS base
 FROM base AS deps
 WORKDIR /app
 
+# Install curl for healthchecks
+RUN apk add --no-cache curl
+
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
 RUN npm ci
@@ -27,6 +30,11 @@ WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+# Install curl for healthchecks
+RUN apk add --no-cache curl
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -37,11 +45,17 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Set proper permissions
+RUN chown -R nextjs:nodejs /app
+
+# Create a healthcheck script
+RUN echo '#!/bin/sh\ncurl -f http://localhost:3000/ || exit 1' > /app/healthcheck.sh && \
+    chmod +x /app/healthcheck.sh
+
 USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 CMD /app/healthcheck.sh
 
 CMD ["node", "server.js"] 
