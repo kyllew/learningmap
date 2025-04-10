@@ -156,9 +156,17 @@ class LearningMapStage extends cdk.Stage {
     const repositoryUri = `${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}`;
 
     // ECS Service
+    const executionRole = new iam.Role(serviceStack, 'TaskExecutionRole', {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy')
+      ]
+    });
+
     const taskDefinition = new ecs.FargateTaskDefinition(serviceStack, 'LearningMapTaskDef', {
       memoryLimitMiB: 1024,
       cpu: 512,
+      executionRole: executionRole
     });
 
     const container = taskDefinition.addContainer('learningmap', {
