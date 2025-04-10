@@ -98,7 +98,12 @@ export class LearningMapStack extends cdk.Stack {
           'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI',
           'docker build -t $CONTAINER_NAME .',
           'docker tag $CONTAINER_NAME:latest $REPOSITORY_URI:latest',
-          'docker push $REPOSITORY_URI:latest'
+          'docker push $REPOSITORY_URI:latest',
+          // Add commands to force ECS service update
+          'echo "Updating ECS service to use new image..."',
+          'CLUSTER_NAME=$(aws ecs list-clusters --query "clusterArns[?contains(@, \'LearningMapCluster\')]" --output text)',
+          'SERVICE_NAME=$(aws ecs list-services --cluster $CLUSTER_NAME --query "serviceArns[?contains(@, \'LearningMapService\')]" --output text)',
+          'aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment'
         ],
         rolePolicyStatements: [
           new iam.PolicyStatement({
@@ -116,6 +121,15 @@ export class LearningMapStack extends cdk.Stack {
               'ecr:PutImage'
             ],
             resources: [repository.repositoryArn]
+          }),
+          // Add ECS permissions
+          new iam.PolicyStatement({
+            actions: [
+              'ecs:ListClusters',
+              'ecs:ListServices',
+              'ecs:UpdateService'
+            ],
+            resources: ['*']
           })
         ]
       })

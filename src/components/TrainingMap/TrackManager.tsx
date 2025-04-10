@@ -63,6 +63,7 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
   const emptyTracks = () => {
     try {
       // Create empty tracks with the same structure but no items
+      // This function removes all courses while keeping track structure intact
       const emptyTracksData = tracks.map(track => ({
         ...track,
         items: []
@@ -289,7 +290,7 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
         </head>
         <body>
           <header class="header">
-            <h1>AWS ILT Classroom</h1>
+            <h1>AWS ILT Classroom - Exam Preparations - Cert</h1>
           </header>
           <div class="container">
             <div class="table-wrapper">
