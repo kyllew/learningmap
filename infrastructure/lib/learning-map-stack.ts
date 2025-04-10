@@ -178,12 +178,16 @@ class LearningMapStage extends cdk.Stage {
         PORT: '3000',
         HOSTNAME: '0.0.0.0'
       },
+      logging: ecs.LogDrivers.awsLogs({
+        streamPrefix: 'learningmap',
+        logRetention: 7
+      }),
       healthCheck: {
-        command: ['CMD-SHELL', 'curl -f http://localhost:3000/ || exit 1'],
+        command: ['CMD-SHELL', 'wget -q --spider http://localhost:3000/ || exit 1'],
         interval: cdk.Duration.seconds(30),
-        timeout: cdk.Duration.seconds(5),
+        timeout: cdk.Duration.seconds(10),
         retries: 3,
-        startPeriod: cdk.Duration.seconds(60)
+        startPeriod: cdk.Duration.seconds(120)
       }
     });
 
@@ -191,19 +195,19 @@ class LearningMapStage extends cdk.Stage {
       cluster,
       taskDefinition,
       desiredCount: 1,
-      assignPublicIp: false,
+      assignPublicIp: true,
       publicLoadBalancer: true,
-      healthCheckGracePeriod: cdk.Duration.seconds(60)
+      healthCheckGracePeriod: cdk.Duration.seconds(180)
     });
 
     // Configure target group health check
     fargateService.targetGroup.configureHealthCheck({
       path: '/',
-      healthyHttpCodes: '200-399',
-      interval: cdk.Duration.seconds(30),
-      timeout: cdk.Duration.seconds(5),
       healthyThresholdCount: 2,
-      unhealthyThresholdCount: 3
+      unhealthyThresholdCount: 5,
+      timeout: cdk.Duration.seconds(10),
+      interval: cdk.Duration.seconds(30),
+      healthyHttpCodes: '200-399'
     });
   }
 }
