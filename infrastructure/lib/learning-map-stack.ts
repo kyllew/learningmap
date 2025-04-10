@@ -10,6 +10,7 @@ import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as pipelines from 'aws-cdk-lib/pipelines';
 import * as cr from 'aws-cdk-lib/custom-resources';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 
 // Define repository name as a constant
@@ -202,7 +203,9 @@ class LearningMapStage extends cdk.Stage {
       healthCheckGracePeriod: cdk.Duration.seconds(180),
       taskSubnets: {
         subnetType: ec2.SubnetType.PUBLIC
-      }
+      },
+      listenerPort: 80,
+      targetProtocol: elbv2.ApplicationProtocol.HTTP
     });
 
     // Configure target group health check
@@ -216,8 +219,18 @@ class LearningMapStage extends cdk.Stage {
       healthyHttpCodes: '200-399'
     });
 
-    // Add security group rules
-    fargateService.service.connections.allowFromAnyIpv4(ec2.Port.tcp(3000), 'Allow inbound HTTP traffic');
+    // Update security group rules to allow inbound traffic from ALB
+    fargateService.service.connections.allowFrom(
+      fargateService.loadBalancer,
+      ec2.Port.tcp(3000),
+      'Allow inbound from ALB'
+    );
+    
+    // Allow inbound HTTP traffic to ALB
+    fargateService.loadBalancer.connections.allowFromAnyIpv4(
+      ec2.Port.tcp(80),
+      'Allow inbound HTTP traffic to ALB'
+    );
     
     // Allow the task to pull from ECR
     const ecrRepo = ecr.Repository.fromRepositoryAttributes(serviceStack, 'ExistingEcrRepo', {
