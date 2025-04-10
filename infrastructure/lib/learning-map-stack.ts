@@ -153,7 +153,7 @@ class LearningMapStage extends cdk.Stage {
     });
 
     // Construct the repository URI using account and region
-    const repositoryUri = `${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}`;
+    const repositoryUri = `${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}:latest`;
 
     // ECS Service
     const executionRole = new iam.Role(serviceStack, 'TaskExecutionRole', {
@@ -169,8 +169,37 @@ class LearningMapStage extends cdk.Stage {
       executionRole: executionRole
     });
 
+    // Create a task role
+    const taskRole = new iam.Role(serviceStack, 'TaskRole', {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+    });
+
+    // Add permissions to the task role if needed
+    taskRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy')
+    );
+
+    taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'ecr:GetAuthorizationToken',
+          'ecr:BatchCheckLayerAvailability',
+          'ecr:GetDownloadUrlForLayer',
+          'ecr:BatchGetImage'
+        ],
+        resources: ['*']
+      })
+    );
+
     const container = taskDefinition.addContainer('learningmap', {
-      image: ecs.ContainerImage.fromRegistry(repositoryUri),
+      image: ecs.ContainerImage.fromEcrRepository(
+        ecr.Repository.fromRepositoryAttributes(serviceStack, 'ExistingRepo', {
+          repositoryArn: `arn:aws:ecr:${REGION}:${ACCOUNT}:repository/${ECR_REPOSITORY_NAME}`,
+          repositoryName: ECR_REPOSITORY_NAME
+        }),
+        'latest'
+      ),
       containerName: ECR_REPOSITORY_NAME,
       portMappings: [{ containerPort: 3000 }],
       environment: {
@@ -179,16 +208,37 @@ class LearningMapStage extends cdk.Stage {
         HOSTNAME: '0.0.0.0'
       },
       logging: ecs.LogDrivers.awsLogs({
-        streamPrefix: 'learningmap',
+        streamPrefix: 'ecs',
         logRetention: 7
       }),
+      essential: true,
+      memoryLimitMiB: 512,
+      cpu: 256,
       healthCheck: {
-        command: ['CMD-SHELL', 'wget -q --spider http://localhost:3000/ || exit 1'],
-        interval: cdk.Duration.seconds(30),
+        command: [
+          'CMD-SHELL',
+          'curl -f http://localhost:3000/ || exit 1'
+        ],
+        interval: cdk.Duration.seconds(60),
         timeout: cdk.Duration.seconds(10),
         retries: 3,
-        startPeriod: cdk.Duration.seconds(120)
+        startPeriod: cdk.Duration.seconds(180)
       }
+    });
+
+    // Install curl in the container
+    container.addUlimits({
+      name: ecs.UlimitName.NOFILE,
+      softLimit: 65536,
+      hardLimit: 65536
+    });
+
+    // Add container dependencies
+    taskDefinition.addContainer('healthcheck-sidecar', {
+      image: ecs.ContainerImage.fromRegistry('alpine'),
+      essential: false,
+      command: ['apk', 'add', '--no-cache', 'curl'],
+      user: 'root'
     });
 
     const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(serviceStack, 'LearningMapService', {
@@ -197,17 +247,23 @@ class LearningMapStage extends cdk.Stage {
       desiredCount: 1,
       assignPublicIp: true,
       publicLoadBalancer: true,
-      healthCheckGracePeriod: cdk.Duration.seconds(180)
+      healthCheckGracePeriod: cdk.Duration.seconds(180),
+      taskSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      }
     });
 
-    // Configure target group health check
+    // Configure target group health check with longer intervals
     fargateService.targetGroup.configureHealthCheck({
       path: '/',
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 5,
-      timeout: cdk.Duration.seconds(10),
-      interval: cdk.Duration.seconds(30),
+      timeout: cdk.Duration.seconds(20),
+      interval: cdk.Duration.seconds(60),
       healthyHttpCodes: '200-399'
     });
+
+    // Add security group rule to allow inbound traffic on port 3000
+    fargateService.service.connections.allowFromAnyIpv4(ec2.Port.tcp(3000), 'Allow inbound HTTP traffic');
   }
 }
