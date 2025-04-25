@@ -12,7 +12,7 @@ interface TrainingCellProps {
   trackId: string;
   items: TrackItem[];
   onRemoveCourse: (trackId: string, courseTitle: string) => void;
-  isMerged?: boolean;
+  isLandscape?: boolean;
 }
 
 // Create a separate component for draggable course items
@@ -44,7 +44,9 @@ const DraggableCourseItem: React.FC<{
       {...attributes}
       {...listeners}
       className={`
-        relative group bg-white p-3 rounded-lg
+        relative group bg-white
+        w-full max-w-full
+        p-3 rounded-lg
         border border-[#e9ebed]
         transition-all duration-300 ease-in-out
         hover:shadow-lg hover:scale-[1.02]
@@ -73,15 +75,15 @@ const DraggableCourseItem: React.FC<{
         </svg>
       </button>
 
-      <Box variant="awsui-key-label">
+      <Box variant="awsui-key-label" className="w-full">
         <Link
           href={item.url}
           external
-          className="block mb-2"
+          className="block mb-2 break-words w-full"
         >
           {item.title}
         </Link>
-        <SpaceBetween size="xs" direction="horizontal">
+        <SpaceBetween size="xs" direction="horizontal" className="flex-wrap">
           <Badge>{item.duration}</Badge>
           <Badge 
             color={
@@ -102,7 +104,7 @@ const TrainingCell: React.FC<TrainingCellProps> = ({
   trackId,
   items,
   onRemoveCourse,
-  isMerged = false,
+  isLandscape = false,
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `${trackId}-${levelId}`,
@@ -116,7 +118,8 @@ const TrainingCell: React.FC<TrainingCellProps> = ({
     <div
       ref={setNodeRef}
       className={`
-        p-4 min-h-[100px] w-full
+        p-4 min-h-[100px]
+        w-full max-w-full
         transition-all duration-300 ease-in-out
         relative
         ${isOver 
@@ -126,8 +129,10 @@ const TrainingCell: React.FC<TrainingCellProps> = ({
       `}
     >
       <div className={`
-        flex flex-col gap-3 w-full relative z-10
-        ${isMerged ? 'items-center' : ''}
+        flex flex-col gap-3
+        w-full max-w-full
+        relative z-10
+        ${isLandscape ? 'items-stretch' : ''}
       `}>
         {items.map((item, index) => (
           <DraggableCourseItem

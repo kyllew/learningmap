@@ -20,6 +20,7 @@ const typedInitialTracksData = initialTracksData as Track[];
 interface TrackManagerProps {
   tracks: Track[];
   onTracksChange: (tracks: Track[]) => void;
+  selectedTrackId: string | null;
 }
 
 interface MergedCell {
@@ -28,7 +29,7 @@ interface MergedCell {
   content: string;
 }
 
-const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) => {
+const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange, selectedTrackId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -94,251 +95,219 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
 
   const exportToHtml = () => {
     try {
+      const tracksToExport = selectedTrackId 
+        ? tracks.filter(track => track.id === selectedTrackId)
+        : tracks;
+
+      const getTitle = () => {
+        if (selectedTrackId) {
+          const trackName = tracks.find(t => t.id === selectedTrackId)?.name;
+          return `${trackName} Learning Track`;
+        }
+        return 'AWS Learning Map';
+      };
+
+      const getActiveLevels = (track: Track) => {
+        return LEVELS.filter(level => 
+          track.items.some(item => item.targetLevel === level.id)
+        );
+      };
+
+      const getLevelStyle = (levelId: string) => {
+        switch(levelId) {
+          case 'level-1':
+            return 'background-color: #0972d3;';
+          case 'level-2-core':
+          case 'level-2-additional':
+            return 'background-color: #037f0c;';
+          case 'level-3':
+            return 'background-color: #5f1dc5;';
+          default:
+            return 'background-color: #414d5c;';
+        }
+      };
+
+      const getLevelBackgroundColor = (index: number) => {
+        if (index <= 2) return 'background-color: #f2f8fd;';
+        if (index <= 6) return 'background-color: #f2f8f6;';
+        return 'background-color: #f7f4fc;';
+      };
+
+      const generateTableHtml = () => {
+        if (selectedTrackId) {
+          // Single track view - landscape layout
+          const track = tracksToExport[0];
+          const activeLevels = getActiveLevels(track);
+
+          return `
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  ${activeLevels.map(level => `
+                    <th style="padding: 16px; border: 1px solid #e9ebed; text-align: center; width: 250px; ${getLevelStyle(level.id)}">
+                      <div style="color: white; font-weight: 600;">
+                        ${level.name}
+                      </div>
+                    </th>
+                  `).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  ${activeLevels.map((level, index) => `
+                    <td style="border: 1px solid #e9ebed; padding: 16px; vertical-align: top; width: 250px; ${getLevelBackgroundColor(LEVELS.findIndex(l => l.id === level.id))}">
+                      ${track.items
+                        .filter(item => item.targetLevel === level.id)
+                        .map(item => `
+                          <div style="background: white; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #e9ebed;">
+                            <a href="${item.url}" target="_blank" style="color: #0972d3; text-decoration: none; display: block; margin-bottom: 8px;">
+                              ${item.title}
+                            </a>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                              <span style="background: #e9ebed; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ${item.duration}
+                              </span>
+                              <span style="background: ${
+                                item.level === 'fundamental' ? '#e3f2fd' :
+                                item.level === 'associate' ? '#e8f5e9' :
+                                '#ffebee'
+                              }; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ${item.level.charAt(0).toUpperCase() + item.level.slice(1)}
+                              </span>
+                            </div>
+                          </div>
+                        `).join('')}
+                    </td>
+                  `).join('')}
+                </tr>
+              </tbody>
+            </table>
+          `;
+        } else {
+          // Full grid view - original vertical layout
+          return `
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th style="padding: 16px; background: #0f1b2a; border: 1px solid #e9ebed; color: white; font-weight: 600; text-align: left; width: 150px;">
+                    Levels
+                  </th>
+                  ${tracksToExport.map(track => `
+                    <th style="padding: 16px; background: #0f1b2a; border: 1px solid #e9ebed; color: white; font-weight: 600; text-align: center;">
+                      ${track.name}
+                    </th>
+                  `).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${LEVELS.map((level, levelIndex) => `
+                  <tr>
+                    <td style="padding: 16px; border: 1px solid #e9ebed; ${getLevelStyle(level.id)}">
+                      <div style="color: white; font-weight: 600;">
+                        ${level.name}
+                      </div>
+                    </td>
+                    ${tracksToExport.map(track => `
+                      <td style="border: 1px solid #e9ebed; padding: 16px; vertical-align: top; ${getLevelBackgroundColor(levelIndex)}">
+                        ${track.items
+                          .filter(item => item.targetLevel === level.id)
+                          .map(item => `
+                            <div style="background: white; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #e9ebed;">
+                              <a href="${item.url}" target="_blank" style="color: #0972d3; text-decoration: none; display: block; margin-bottom: 8px;">
+                                ${item.title}
+                              </a>
+                              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: #e9ebed; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                  ${item.duration}
+                                </span>
+                                <span style="background: ${
+                                  item.level === 'fundamental' ? '#e3f2fd' :
+                                  item.level === 'associate' ? '#e8f5e9' :
+                                  '#ffebee'
+                                }; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                  ${item.level.charAt(0).toUpperCase() + item.level.slice(1)}
+                                </span>
+                              </div>
+                            </div>
+                          `).join('')}
+                      </td>
+                    `).join('')}
+                  </tr>
+                  ${(levelIndex === 2 || levelIndex === 6) ? `
+                    <tr>
+                      <td colspan="${tracksToExport.length + 1}" style="height: 32px; background: #f4f4f4; border: 1px solid #e9ebed;"></td>
+                    </tr>
+                  ` : ''}
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      };
+
       const html = `
         <!DOCTYPE html>
-        <html lang="en">
+        <html>
         <head>
           <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>AWS Learning Map</title>
+          <title>${getTitle()}</title>
           <style>
+            @font-face {
+              font-family: 'Amazon Ember';
+              src: url('https://d1s31zyz7dcc2d.cloudfront.net/9519319c6d0646f38e4aa7261b225d58/AmazonEmber_W_Rg.woff2') format('woff2');
+              font-weight: normal;
+              font-style: normal;
+            }
+            
+            @font-face {
+              font-family: 'Amazon Ember';
+              src: url('https://d1s31zyz7dcc2d.cloudfront.net/2c09921762c34e51b6645da7d8e1d2b5/AmazonEmber_W_Bd.woff2') format('woff2');
+              font-weight: bold;
+              font-style: normal;
+            }
+
             body {
-              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #f8f8f8;
+              font-family: 'Amazon Ember', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+              padding: 20px;
+              max-width: 1800px;
+              margin: 0 auto;
+              color: #000716;
+              background-color: #ffffff;
             }
-            
-            .header {
-              background-color: #0972d3;
-              color: white;
-              padding: 16px;
+
+            table {
+              box-shadow: 0 1px 4px 0 rgba(0, 28, 36, 0.15);
+              border-radius: 8px;
+              overflow: hidden;
             }
-            
-            .header h1 {
-              margin: 0;
+
+            .title {
+              color: #000716;
+              margin-bottom: 24px;
               font-size: 24px;
               font-weight: bold;
-            }
-            
-            .container {
-              max-width: 100%;
-              background: white;
-              border-radius: 8px;
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-              position: relative;
-              height: calc(100vh - 40px);
-              overflow: hidden;
-              margin: 20px;
+              line-height: 1.25;
+              font-family: 'Amazon Ember', sans-serif;
             }
 
-            .table-wrapper {
-              overflow: auto;
-              height: 100%;
-              position: relative;
-            }
-            
-            table {
-              border-collapse: collapse;
-              width: 100%;
-              background: white;
-            }
-            
-            th, td {
-              border: 1px solid #e9ebed;
-              padding: 16px;
-            }
-            
-            /* Sticky header styles */
-            thead {
-              position: sticky;
-              top: 0;
-              z-index: 20;
-              background: #0f1b2a;
+            th {
+              font-family: 'Amazon Ember', sans-serif;
+              font-weight: bold;
             }
 
-            thead th {
-              background-color: #0f1b2a;
-              color: white;
-              font-weight: 600;
-              text-align: center;
-              position: relative; /* For border rendering */
-            }
-            
-            /* Sticky first column */
-            th:first-child,
-            td:first-child {
-              position: sticky;
-              left: 0;
-              z-index: 10;
-            }
-
-            /* Increase z-index for the intersection of sticky header and first column */
-            thead th:first-child {
-              z-index: 30;
-            }
-            
-            .level-header {
-              color: white;
-              font-weight: 600;
-              background-color: inherit;
-            }
-            
-            /* Level background colors */
-            .level-1 td:not(:first-child) { background-color: #f2f8fd; }
-            .level-2 td:not(:first-child) { background-color: #f2f8f6; }
-            .level-3 td:not(:first-child) { background-color: #f7f4fc; }
-            
-            /* Level header colors */
-            .level-1 td:first-child { background-color: #0972d3; }
-            .level-2 td:first-child { background-color: #037f0c; }
-            .level-3 td:first-child { background-color: #5f1dc5; }
-            
-            .course-cell {
-              background: white;
-              border: 1px solid #e9ebed;
-              border-radius: 4px;
-              padding: 12px;
-              margin: 4px 0;
-              transition: all 0.2s ease;
-            }
-            
-            .course-cell:hover {
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-              border-color: #0972d3;
-            }
-            
-            .course-title {
+            a {
               color: #0972d3;
               text-decoration: none;
-              font-weight: 500;
-              display: block;
-              margin-bottom: 8px;
             }
-            
-            .course-title:hover {
+
+            a:hover {
               text-decoration: underline;
-            }
-            
-            .course-meta {
-              display: flex;
-              gap: 8px;
-            }
-            
-            .badge {
-              padding: 4px 8px;
-              border-radius: 4px;
-              font-size: 12px;
-            }
-            
-            .badge-duration {
-              background-color: #f2f2f2;
-              color: #444;
-            }
-            
-            .badge-fundamental {
-              background-color: #f2f8fd;
-              color: #0972d3;
-            }
-            
-            .badge-associate {
-              background-color: #f2f8f6;
-              color: #037f0c;
-            }
-            
-            .badge-professional {
-              background-color: #f7f4fc;
-              color: #5f1dc5;
-            }
-            
-            .level-spacer {
-              height: 32px;
-              background-color: #f4f4f4;
-            }
-
-            /* Fix for sticky borders */
-            thead th:after,
-            tbody td:first-child:after {
-              content: '';
-              position: absolute;
-              top: 0;
-              right: 0;
-              bottom: 0;
-              left: 0;
-              border: 1px solid #e9ebed;
-              pointer-events: none;
-            }
-
-            @media (max-width: 768px) {
-              body {
-                padding: 10px;
-              }
-              
-              .container {
-                height: calc(100vh - 20px);
-              }
-
-              th, td {
-                padding: 12px;
-              }
-              
-              .course-cell {
-                padding: 8px;
-              }
             }
           </style>
         </head>
         <body>
-          <header class="header">
-            <h1>AWS ILT Classroom - Exam Preparations - Cert</h1>
-          </header>
-          <div class="container">
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Levels</th>
-                    ${tracks.map(track => `<th>${track.name}</th>`).join('')}
-                  </tr>
-                </thead>
-                <tbody>
-                  ${LEVELS.map((level, index) => {
-                    const isLevel1End = index === 2;
-                    const isLevel2End = index === 6;
-                    const levelClass = index <= 2 ? 'level-1' : 
-                                     index <= 6 ? 'level-2' : 
-                                     'level-3';
-                    
-                    return `
-                      <tr class="${levelClass}">
-                        <td class="level-header">${level.name}</td>
-                        ${tracks.map(track => `
-                          <td>
-                            ${track.items
-                              .filter(item => item.targetLevel === level.id)
-                              .map(item => `
-                                <div class="course-cell">
-                                  <a href="${item.url}" target="_blank" class="course-title">${item.title}</a>
-                                  <div class="course-meta">
-                                    <span class="badge badge-duration">${item.duration}</span>
-                                    <span class="badge badge-${item.level}">${item.level.charAt(0).toUpperCase() + item.level.slice(1)}</span>
-                                  </div>
-                                </div>
-                              `).join('')}
-                          </td>
-                        `).join('')}
-                      </tr>
-                      ${(isLevel1End || isLevel2End) ? `
-                        <tr>
-                          <td colspan="${tracks.length + 1}" class="level-spacer"></td>
-                        </tr>
-                      ` : ''}
-                    `;
-                  }).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <h1 class="title">${getTitle()}</h1>
+          ${generateTableHtml()}
         </body>
         </html>
       `;
@@ -347,7 +316,11 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange }) =
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `aws-learning-map-${new Date().toISOString().split('T')[0]}.html`;
+      link.download = `${
+        selectedTrackId 
+          ? tracks.find(t => t.id === selectedTrackId)?.name.toLowerCase().replace(/\s+/g, '-')
+          : 'aws-learning-map'
+      }-${new Date().toISOString().split('T')[0]}.html`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

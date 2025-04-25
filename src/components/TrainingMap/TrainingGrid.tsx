@@ -22,11 +22,13 @@ import TrackManager from './TrackManager';
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Box from "@cloudscape-design/components/box";
+import Button from "@cloudscape-design/components/button";
 
 const TrainingGrid: React.FC = () => {
   const [tracks, setTracks] = useState<Track[]>(TRACKS);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeCourse, setActiveCourse] = useState<TrackItem | null>(null);
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -179,6 +181,179 @@ const TrainingGrid: React.FC = () => {
     );
   };
 
+  const handleTrackHeaderClick = (trackId: string) => {
+    setSelectedTrackId(selectedTrackId === trackId ? null : trackId);
+  };
+
+  const displayedTracks = selectedTrackId 
+    ? tracks.filter(track => track.id === selectedTrackId)
+    : tracks;
+
+  // Add this helper function to filter levels with content
+  const getLevelsWithContent = (track: Track) => {
+    return LEVELS.filter(level => 
+      track.items.some(item => item.targetLevel === level.id)
+    );
+  };
+
+  // Simplified getLevelColumnWidth function for equal widths
+  const getLevelColumnWidth = () => {
+    return 'w-[250px] min-w-[250px] max-w-[250px]'; // Added max-width constraint
+  };
+
+  // Updated renderLandscapeView function
+  const renderLandscapeView = () => {
+    const selectedTrack = tracks.find(track => track.id === selectedTrackId);
+    if (!selectedTrack) return null;
+
+    const activeLevels = getLevelsWithContent(selectedTrack);
+
+    if (activeLevels.length === 0) {
+      return renderEmptyTrackState();
+    }
+
+    return (
+      <div className="overflow-auto max-h-[calc(100vh-180px)]">
+        <table className="w-full border-collapse table-fixed">
+          <thead className="sticky top-0 z-30">
+            <tr>
+              {activeLevels.map((level) => (
+                <th 
+                  key={level.id}
+                  className={`
+                    p-4 bg-[#0f1b2a] text-center whitespace-normal 
+                    border border-[#e9ebed] z-30
+                    ${getLevelColumnWidth()}
+                  `}
+                >
+                  <div className={`text-white font-semibold ${getLevelStyle(level.id)}`}>
+                    {level.name}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {activeLevels.map((level, index) => {
+                const levelBackground = getLevelBackgroundColor(
+                  LEVELS.findIndex(l => l.id === level.id)
+                );
+                return (
+                  <td 
+                    key={`${selectedTrack.id}-${level.id}`}
+                    className={`
+                      border border-[#e9ebed] p-0 
+                      ${levelBackground}
+                      ${getLevelColumnWidth()}
+                    `}
+                  >
+                    <TrainingCell
+                      trackId={selectedTrack.id}
+                      levelId={level.id}
+                      items={selectedTrack.items.filter(item => item.targetLevel === level.id)}
+                      onRemoveCourse={handleRemoveCourse}
+                      isLandscape={true}
+                    />
+                  </td>
+                );
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  // Add a droppable area for empty state
+  const renderEmptyTrackState = () => {
+    const selectedTrack = tracks.find(track => track.id === selectedTrackId);
+    if (!selectedTrack) return null;
+
+    return (
+      <div 
+        className={`
+          p-8 text-center text-gray-500
+          border-2 border-dashed border-gray-300
+          rounded-lg m-4
+          min-h-[200px]
+          flex flex-col items-center justify-center
+        `}
+      >
+        <div className="text-lg mb-2">Drag courses here to get started</div>
+        <div className="text-sm">Courses will be organized by level automatically</div>
+      </div>
+    );
+  };
+
+  // Render regular grid view for all tracks
+  const renderGridView = () => {
+    return (
+      <div className="overflow-auto max-h-[calc(100vh-180px)]">
+        <table className="w-full border-collapse">
+          <thead className="sticky top-0 z-30">
+            <tr>
+              <th className="p-4 bg-[#0f1b2a] border border-[#e9ebed] w-[150px] min-w-[150px] sticky left-0 z-40">
+                <div className="text-white font-semibold">
+                  Levels
+                </div>
+              </th>
+              {displayedTracks.map(track => (
+                <th 
+                  key={track.id} 
+                  className="p-4 bg-[#0f1b2a] text-center whitespace-normal border border-[#e9ebed] z-30 cursor-pointer hover:bg-[#1a2634] transition-colors duration-200"
+                  onClick={() => handleTrackHeaderClick(track.id)}
+                >
+                  <div className="text-white font-semibold">
+                    {track.name}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {LEVELS.map((level, index) => {
+              const isLevel1End = index === 2;
+              const isLevel2End = index === 6;
+              const levelBackground = getLevelBackgroundColor(index);
+
+              return (
+                <React.Fragment key={level.id}>
+                  <tr className={`group ${levelBackground} hover:brightness-95`}>
+                    <td className={`p-4 border border-[#e9ebed] sticky left-0 z-10 ${getLevelStyle(level.id)}`}>
+                      <div className="text-white font-semibold">
+                        {level.name}
+                      </div>
+                    </td>
+                    {displayedTracks.map(track => (
+                      <td 
+                        key={`${track.id}-${level.id}`} 
+                        className={`border border-[#e9ebed] p-0 ${levelBackground}`}
+                      >
+                        <TrainingCell
+                          trackId={track.id}
+                          levelId={level.id}
+                          items={track.items.filter(item => item.targetLevel === level.id)}
+                          onRemoveCourse={handleRemoveCourse}
+                          isLandscape={false}
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                  {(isLevel1End || isLevel2End) && (
+                    <tr className="h-8 bg-[#f4f4f4]">
+                      <td colSpan={displayedTracks.length + 1} className="border border-[#e9ebed]"></td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   return (
     <DndContext 
       sensors={sensors} 
@@ -189,79 +364,44 @@ const TrainingGrid: React.FC = () => {
         <Container>
           <div className="bg-white p-4 rounded-lg">
             <div className="flex">
-              {/* Left Panel - adjusted width and styling */}
+              {/* Left Panel - unchanged */}
               <div className="w-[320px] h-[calc(100vh-180px)] flex flex-col bg-white shadow-lg">
                 <div className="p-4 flex-shrink-0">
-                  <TrackManager tracks={tracks} onTracksChange={handleTracksChange} />
+                  <TrackManager 
+                    tracks={tracks} 
+                    onTracksChange={handleTracksChange} 
+                    selectedTrackId={selectedTrackId}
+                  />
                 </div>
                 <div className="flex-1 p-4 overflow-y-auto">
                   <CourseList />
                 </div>
               </div>
               
-              {/* Grid - updated font styles */}
+              {/* Grid - updated with track selection */}
               <div className="flex-1 p-4 overflow-x-auto">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                  <div className="overflow-auto max-h-[calc(100vh-180px)]">
-                    <table className="w-full border-collapse">
-                      <thead className="sticky top-0 z-30">
-                        <tr>
-                          <th className="p-4 bg-[#0f1b2a] border border-[#e9ebed] w-[150px] min-w-[150px] sticky left-0 z-40">
-                            <div className="text-white font-semibold">
-                              Levels
-                            </div>
-                          </th>
-                          {tracks.map(track => (
-                            <th 
-                              key={track.id} 
-                              className="p-4 bg-[#0f1b2a] text-center whitespace-normal border border-[#e9ebed] z-30"
-                            >
-                              <div className="text-white font-semibold">
-                                {track.name}
-                              </div>
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {LEVELS.map((level, index) => {
-                          const isLevel1End = index === 2;
-                          const isLevel2End = index === 6;
-                          const levelBackground = getLevelBackgroundColor(index);
-
-                          return (
-                            <React.Fragment key={level.id}>
-                              <tr className={`group ${levelBackground} hover:brightness-95`}>
-                                <td className={`p-4 border border-[#e9ebed] sticky left-0 z-10 ${getLevelStyle(level.id)}`}>
-                                  <div className="text-white font-semibold">
-                                    {level.name}
-                                  </div>
-                                </td>
-                                {tracks.map(track => (
-                                  <td 
-                                    key={`${track.id}-${level.id}`} 
-                                    className={`border border-[#e9ebed] p-0 ${levelBackground}`}
-                                  >
-                                    <TrainingCell
-                                      trackId={track.id}
-                                      levelId={level.id}
-                                      items={track.items.filter(item => item.targetLevel === level.id)}
-                                      onRemoveCourse={handleRemoveCourse}
-                                    />
-                                  </td>
-                                ))}
-                              </tr>
-                              {(isLevel1End || isLevel2End) && (
-                                <tr className="h-8 bg-[#f4f4f4]">
-                                  <td colSpan={tracks.length + 1} className="border border-[#e9ebed]"></td>
-                                </tr>
-                              )}
-                            </React.Fragment>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                  {selectedTrackId && (
+                    <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                      <Button 
+                        onClick={() => setSelectedTrackId(null)}
+                        iconName="close"
+                      >
+                        Return to Full Grid
+                      </Button>
+                      <div className="text-lg font-semibold">
+                        {tracks.find(t => t.id === selectedTrackId)?.name}
+                      </div>
+                    </div>
+                  )}
+                  {selectedTrackId ? (
+                    <div>
+                      {getLevelsWithContent(tracks.find(t => t.id === selectedTrackId)!).length > 0 
+                        ? renderLandscapeView() 
+                        : renderEmptyTrackState()
+                      }
+                    </div>
+                  ) : renderGridView()}
                 </div>
               </div>
             </div>
