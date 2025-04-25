@@ -13,7 +13,25 @@ const nextConfig = {
         'node_modules/@esbuild/linux-x64',
       ],
     },
-  }
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        stream: false,
+        os: false,
+        path: false,
+        crypto: false,
+      };
+    }
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false,
+      encoding: false,
+    };
+    return config;
+  },
 }
 
 module.exports = nextConfig 

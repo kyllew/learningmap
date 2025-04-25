@@ -330,6 +330,200 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange, sel
     }
   };
 
+  // Add this helper function to filter levels with content
+  const getLevelsWithContent = (track: Track) => {
+    return LEVELS.filter(level => 
+      track.items.some(item => item.targetLevel === level.id)
+    );
+  };
+
+  const exportToPowerPoint = async () => {
+    try {
+      const pptxgen = (await import('pptxgenjs')).default;
+      const pres = new pptxgen();
+      
+      const defaultFont = 'Calibri';
+      
+      const tracksToExport = selectedTrackId 
+        ? tracks.filter(track => track.id === selectedTrackId)
+        : tracks;
+
+      const title = selectedTrackId
+        ? `${tracks.find(t => t.id === selectedTrackId)?.name} Learning Track`
+        : 'AWS Learning Map';
+
+      // Title slide
+      const titleSlide = pres.addSlide();
+      titleSlide.addText(title, {
+        x: 0.5,
+        y: 1,
+        w: '90%',
+        h: 0.8,
+        fontSize: 20,
+        color: '000716',
+        bold: true,
+        align: 'center',
+        fontFace: defaultFont
+      });
+
+      const createContentSlide = () => {
+        const slide = pres.addSlide();
+
+        if (selectedTrackId) {
+          const track = tracksToExport[0];
+          const activeLevels = getLevelsWithContent(track);
+          
+          if (activeLevels.length === 0) {
+            slide.addText('No courses placed in this track yet', {
+              x: 0.5,
+              y: 2,
+              w: '90%',
+              h: 1,
+              fontSize: 14,
+              color: '5F6B7A',
+              align: 'center',
+              fontFace: defaultFont
+            });
+            return;
+          }
+
+          // Track name as slide title
+          slide.addText(track.name, {
+            x: 0.5,
+            y: 0.3,
+            w: '90%',
+            h: 0.4,
+            fontSize: 14,
+            color: '000716',
+            bold: true,
+            align: 'center',
+            fontFace: defaultFont
+          });
+
+          const startY = 0.8;
+          const levelWidth = Math.min(2.2, 9 / activeLevels.length);
+          const totalWidth = levelWidth * activeLevels.length;
+          const startX = (10 - totalWidth) / 2;
+
+          activeLevels.forEach((level, index) => {
+            const x = startX + (index * levelWidth);
+
+            // Level header
+            slide.addText(level.name, {
+              x: x,
+              y: startY,
+              w: levelWidth - 0.1,
+              h: 0.4,
+              color: 'FFFFFF',
+              fontSize: 9,
+              bold: true,
+              align: 'center',
+              valign: 'middle',
+              fill: { color: getLevelColorForPPT(level.id) },
+              fontFace: defaultFont
+            });
+
+            const items = track.items.filter(item => item.targetLevel === level.id);
+            const itemHeight = 0.5;
+            const contentY = startY + 0.45;
+
+            items.forEach((item, itemIndex) => {
+              const itemY = contentY + (itemIndex * itemHeight);
+
+              // Course box
+              slide.addText([
+                {
+                  text: item.title,
+                  options: {
+                    hyperlink: { url: item.url },
+                    color: '0972D3',
+                    fontSize: 7,
+                    breakLine: true,
+                    fontFace: defaultFont
+                  }
+                },
+                {
+                  text: `${item.duration} | ${item.level}`,
+                  options: {
+                    color: '5F6B7A',
+                    fontSize: 6,
+                    fontFace: defaultFont
+                  }
+                }
+              ], {
+                x: x,
+                y: itemY,
+                w: levelWidth - 0.1,
+                h: itemHeight - 0.05,
+                fill: { color: 'FFFFFF' },
+                line: { color: 'E9EBED', pt: 0.5 },
+                padding: 3
+              });
+            });
+          });
+        } else {
+          // Full grid view
+          const tableData = [];
+          const headerRow = ['Levels', ...tracksToExport.map(t => t.name)];
+          tableData.push(headerRow);
+
+          LEVELS.forEach(level => {
+            const row = [level.name];
+            tracksToExport.forEach(track => {
+              const items = track.items
+                .filter(item => item.targetLevel === level.id)
+                .map(item => `${item.title}\n(${item.duration})`)
+                .join('\n\n');
+              row.push(items);
+            });
+            tableData.push(row);
+          });
+
+          slide.addTable(tableData, {
+            x: 0.5,
+            y: 0.5,
+            w: 9,
+            colW: [2, ...Array(tracksToExport.length).fill(7/tracksToExport.length)],
+            border: { pt: 0.5, color: 'E9EBED' },
+            align: 'left',
+            fontSize: 7,
+            fontFace: defaultFont,
+            rowH: 0.8,
+            autoPage: true,
+            valign: 'middle'
+          });
+        }
+      };
+
+      createContentSlide();
+
+      const filename = `${
+        selectedTrackId 
+          ? tracks.find(t => t.id === selectedTrackId)?.name.toLowerCase().replace(/\s+/g, '-')
+          : 'aws-learning-map'
+      }-${new Date().toISOString().split('T')[0]}.pptx`;
+
+      pres.writeFile(filename);
+    } catch (error) {
+      console.error('Error exporting to PowerPoint:', error);
+    }
+  };
+
+  // Helper function for PowerPoint colors
+  const getLevelColorForPPT = (levelId: string) => {
+    switch(levelId) {
+      case 'level-1':
+        return '0972D3';
+      case 'level-2-core':
+      case 'level-2-additional':
+        return '037F0C';
+      case 'level-3':
+        return '5F1DC5';
+      default:
+        return '414D5C';
+    }
+  };
+
   return (
     <Container>
       <Header
@@ -374,6 +568,17 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange, sel
               fullWidth
             >
               Export to HTML
+            </Button>
+            <Button
+              iconName="download"
+              onClick={() => {
+                exportToPowerPoint().catch(error => {
+                  console.error('Failed to export PowerPoint:', error);
+                });
+              }}
+              fullWidth
+            >
+              Export to PowerPoint
             </Button>
             <Button
               iconName="upload"

@@ -16,7 +16,7 @@ phases:
       - cd $CODEBUILD_SRC_DIR
       - echo "Current directory: $(pwd)"
       - ls -la
-      - docker build -t learningmap .
+      - docker build --build-arg NODE_ENV=production -t learningmap .
       - docker tag learningmap:latest 358719591151.dkr.ecr.us-east-1.amazonaws.com/learningmap:latest
   post_build:
     commands:

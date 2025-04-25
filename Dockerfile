@@ -4,8 +4,16 @@ FROM public.ecr.aws/docker/library/node:18-alpine AS base
 FROM base AS deps
 WORKDIR /app
 
-# Install curl for healthchecks
-RUN apk add --no-cache curl
+# Install curl and additional dependencies for pptxgenjs
+RUN apk add --no-cache curl \
+    # Dependencies for canvas and other native modules
+    python3 \
+    make \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
