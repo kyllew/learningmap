@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Install curl and additional dependencies for pptxgenjs
 RUN apk add --no-cache curl \
-    # Dependencies for canvas and other native modules
     python3 \
     make \
     g++ \
@@ -27,7 +26,7 @@ COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build Next.js
 RUN npm run build
@@ -36,13 +35,20 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Install curl for healthchecks
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl \
+    python3 \
+    make \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

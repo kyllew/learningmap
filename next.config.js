@@ -30,6 +30,10 @@ const nextConfig = {
       canvas: false,
       encoding: false,
     };
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
+    };
     return config;
   },
 }

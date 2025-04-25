@@ -503,7 +503,7 @@ const TrackManager: React.FC<TrackManagerProps> = ({ tracks, onTracksChange, sel
           : 'aws-learning-map'
       }-${new Date().toISOString().split('T')[0]}.pptx`;
 
-      pres.writeFile(filename);
+      pres.writeFile({ fileName: filename });
     } catch (error) {
       console.error('Error exporting to PowerPoint:', error);
     }
